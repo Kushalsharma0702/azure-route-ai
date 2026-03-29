@@ -108,4 +108,13 @@
     @apply bg-clip-text text-transparent;
     background-image: var(--gradient-cta);
   }
+
+  .glow-card {
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .glow-card:hover {
+    box-shadow: 0 0 30px hsl(230 80% 56% / 0.15), 0 0 60px hsl(262 60% 55% / 0.08);
+    transform: translateY(-2px);
+  }
 }
