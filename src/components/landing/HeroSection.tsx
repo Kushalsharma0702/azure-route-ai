@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, Plane, Building, Train, Package, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import LocationAutoSuggest from "@/components/LocationAutoSuggest";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const tabs = [
@@ -9,7 +10,7 @@ const tabs = [
   { id: "hotels", label: "Hotels", icon: Building },
   { id: "trains", label: "Trains", icon: Train },
   { id: "packages", label: "Packages", icon: Package },
-  { id: "ai", label: "Plan Trip", icon: Sparkles },
+  { id: "ai", label: "AI Planner", icon: Sparkles },
 ];
 
 const HeroSection = () => {
@@ -80,20 +81,10 @@ const HeroSection = () => {
             <div className="p-4">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div className="md:col-span-1">
-                  <label className="text-xs font-medium text-muted-foreground mb-1 block">From</label>
-                  <input
-                    type="text"
-                    placeholder="Delhi (DEL)"
-                    className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition"
-                  />
+                  <LocationAutoSuggest label="From" placeholder="Delhi (DEL)" />
                 </div>
                 <div className="md:col-span-1">
-                  <label className="text-xs font-medium text-muted-foreground mb-1 block">To</label>
-                  <input
-                    type="text"
-                    placeholder="Bali, Indonesia"
-                    className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition"
-                  />
+                  <LocationAutoSuggest label="To" placeholder="Bali, Indonesia" />
                 </div>
                 <div className="md:col-span-1">
                   <label className="text-xs font-medium text-muted-foreground mb-1 block">Date</label>
