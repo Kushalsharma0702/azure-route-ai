@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 
 const navLinks = [
   { label: "Home", path: "/" },
-  { label: "Search", path: "/search" },
-  { label: "Trip Planner", path: "/trip-planner" },
+  { label: "Flights", path: "/search/flights" },
+  { label: "Hotels", path: "/search/hotels" },
+  { label: "Packages", path: "/search/packages" },
+  { label: "AI Planner", path: "/trip-planner" },
   { label: "My Trips", path: "/dashboard" },
 ];
 

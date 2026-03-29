@@ -21,9 +21,9 @@ const Footer = () => {
           <div>
             <h4 className="font-bold text-primary-foreground mb-4 text-sm">Product</h4>
             <ul className="space-y-2 text-sm text-primary-foreground/60">
-              <li><Link to="/" className="hover:text-primary-foreground transition-colors">Flights</Link></li>
-              <li><Link to="/" className="hover:text-primary-foreground transition-colors">Hotels</Link></li>
-              <li><Link to="/" className="hover:text-primary-foreground transition-colors">Packages</Link></li>
+              <li><Link to="/search/flights" className="hover:text-primary-foreground transition-colors">Flights</Link></li>
+              <li><Link to="/search/hotels" className="hover:text-primary-foreground transition-colors">Hotels</Link></li>
+              <li><Link to="/search/packages" className="hover:text-primary-foreground transition-colors">Packages</Link></li>
               <li><Link to="/trip-planner" className="hover:text-primary-foreground transition-colors">AI Planner</Link></li>
             </ul>
           </div>
@@ -51,9 +51,9 @@ const Footer = () => {
         <div className="border-t border-primary-foreground/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs text-primary-foreground/40">© 2026 TripAI. All rights reserved.</p>
           <div className="flex gap-4 text-xs text-primary-foreground/40">
-            <a href="#" className="hover:text-primary-foreground/60">Privacy</a>
-            <a href="#" className="hover:text-primary-foreground/60">Terms</a>
-            <a href="#" className="hover:text-primary-foreground/60">Cookies</a>
+            <Link to="/privacy" className="hover:text-primary-foreground/60">Privacy</Link>
+            <Link to="/terms" className="hover:text-primary-foreground/60">Terms</Link>
+            <Link to="/support" className="hover:text-primary-foreground/60">Support</Link>
           </div>
         </div>
       </div>
