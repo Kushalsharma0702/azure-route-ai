@@ -78,10 +78,10 @@ export const trendingDeals = [
 ];
 
 export const packageCategories = [
-  { id: 1, title: "Weekend Getaways", icon: "🏖️", count: 42, color: "from-primary/10 to-secondary/10" },
-  { id: 2, title: "Honeymoon Specials", icon: "💑", count: 28, color: "from-secondary/15 to-accent/15" },
-  { id: 3, title: "Family Trips", icon: "👨‍👩‍👧‍👦", count: 35, color: "from-accent/15 to-primary/10" },
-  { id: 4, title: "Adventure Tours", icon: "🏔️", count: 19, color: "from-success/10 to-primary/10" },
+  { id: 1, title: "Weekend Getaways", icon: "", count: 42, color: " " },
+  { id: 2, title: "Honeymoon Specials", icon: "", count: 28, color: " " },
+  { id: 3, title: "Family Trips", icon: "", count: 35, color: " " },
+  { id: 4, title: "Adventure Tours", icon: "", count: 19, color: " " },
 ];
 
 export const testimonials = [

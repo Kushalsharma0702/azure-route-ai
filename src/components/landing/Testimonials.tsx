@@ -28,7 +28,7 @@ const Testimonials = () => {
             >
               <Quote className="w-8 h-8 text-primary/15 absolute top-4 right-4" />
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-11 h-11 rounded-full gradient-cta flex items-center justify-center text-primary-foreground font-bold text-sm">
+                <div className="w-11 h-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-primary-foreground font-bold text-sm">
                   {t.avatar}
                 </div>
                 <div>

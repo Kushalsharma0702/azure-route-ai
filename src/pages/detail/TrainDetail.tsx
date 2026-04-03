@@ -31,7 +31,7 @@ const TrainDetail = () => {
               <div className="lg:col-span-2 space-y-6">
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-card rounded-2xl shadow-card border border-border/50 p-6">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-14 h-14 rounded-xl gradient-cta flex items-center justify-center">
+                    <div className="w-14 h-14 rounded-xl bg-primary text-primary-foreground flex items-center justify-center">
                       <TrainIcon className="w-6 h-6 text-primary-foreground" />
                     </div>
                     <div>
@@ -100,7 +100,7 @@ const TrainDetail = () => {
                   <h2 className="font-bold text-lg mb-4">Reviews</h2>
                   {train.reviews.map((r, i) => (
                     <div key={i} className="flex gap-3 p-3 rounded-xl bg-muted/30">
-                      <div className="w-10 h-10 rounded-full gradient-cta flex items-center justify-center text-primary-foreground text-xs font-bold flex-shrink-0">{r.avatar}</div>
+                      <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-primary-foreground text-xs font-bold flex-shrink-0">{r.avatar}</div>
                       <div>
                         <div className="flex items-center gap-2"><span className="font-semibold text-sm">{r.name}</span></div>
                         <div className="flex items-center gap-0.5 my-1">{Array.from({ length: r.rating }).map((_, j) => <Star key={j} className="w-3 h-3 fill-warning text-warning" />)}</div>
@@ -118,7 +118,7 @@ const TrainDetail = () => {
                     <div className="flex justify-between"><span className="text-muted-foreground">Lowest fare</span><span className="font-bold text-primary text-lg">₹{Math.min(...train.classes.map((c) => c.price)).toLocaleString()}</span></div>
                   </div>
                   <Link to={`/book/train/${train.id}/step/1`}>
-                    <Button className="w-full h-12 gradient-cta text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity">
+                    <Button className="w-full h-12 bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity">
                       Book Now
                     </Button>
                   </Link>

@@ -259,11 +259,11 @@ const FlightBooking = () => {
                 Back
               </Button>
               {currentStep < 3 ? (
-                <Button onClick={goNext} className="gradient-cta text-primary-foreground border-0 rounded-xl shadow-lg hover:opacity-90 transition-opacity">
+                <Button onClick={goNext} className="bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl shadow-lg hover:opacity-90 transition-opacity">
                   Continue
                 </Button>
               ) : (
-                <Button onClick={handlePay} disabled={processing} className="gradient-cta text-primary-foreground border-0 rounded-xl shadow-lg hover:opacity-90 transition-opacity min-w-[160px]">
+                <Button onClick={handlePay} disabled={processing} className="bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl shadow-lg hover:opacity-90 transition-opacity min-w-[160px]">
                   {processing ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Processing...</> : `Pay ₹${(totalPrice - discount).toLocaleString()}`}
                 </Button>
               )}

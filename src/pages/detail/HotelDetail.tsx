@@ -1,11 +1,12 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ChevronRight, Star, MapPin, Wifi, Car, UtensilsCrossed, Dumbbell, Waves, Wine, Shield } from "lucide-react";
+import { ChevronRight, Star, MapPin, Wifi, Car, UtensilsCrossed, Dumbbell, Waves, Wine, Shield, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
 import { hotels } from "@/data/hotels";
+import { useState } from "react";
 
 const amenityIcons: Record<string, any> = {
   "Free WiFi": Wifi, Pool: Waves, Spa: Waves, Gym: Dumbbell, Bar: Wine, Restaurant: UtensilsCrossed,
@@ -17,6 +18,16 @@ const amenityIcons: Record<string, any> = {
 const HotelDetail = () => {
   const { id } = useParams();
   const hotel = hotels.find((h) => h.id === id) || hotels[0];
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const totalImages = hotel.images.length;
+
+  const goToPrevImage = () => {
+    setCurrentImageIndex((prev) => (prev === 0 ? totalImages - 1 : prev - 1));
+  };
+
+  const goToNextImage = () => {
+    setCurrentImageIndex((prev) => (prev === totalImages - 1 ? 0 : prev + 1));
+  };
 
   return (
     <PageTransition>
@@ -34,17 +45,44 @@ const HotelDetail = () => {
           </div>
 
           <div className="container mt-8">
-            {/* Gallery */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
-              <div className="md:col-span-2 h-64 md:h-80 rounded-2xl overflow-hidden">
-                <img src={hotel.images[0]} alt={hotel.name} className="w-full h-full object-cover" />
-              </div>
-              <div className="hidden md:grid gap-3">
-                {hotel.images.slice(1, 3).map((img, i) => (
-                  <div key={i} className="h-[calc(50%-6px)] rounded-2xl overflow-hidden">
-                    <img src={img} alt="" className="w-full h-full object-cover" />
-                  </div>
-                ))}
+            {/* Gallery Carousel */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+              <div className="relative h-96 rounded-2xl overflow-hidden bg-muted">
+                <img 
+                  src={hotel.images[currentImageIndex]} 
+                  alt={hotel.name} 
+                  className="w-full h-full object-cover transition-all duration-300"
+                />
+                {totalImages > 1 && (
+                  <>
+                    <button
+                      onClick={goToPrevImage}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-black p-2 rounded-full transition-all duration-200 shadow-lg z-10"
+                      aria-label="Previous image"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={goToNextImage}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-black p-2 rounded-full transition-all duration-200 shadow-lg z-10"
+                      aria-label="Next image"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                      {hotel.images.map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={() => setCurrentImageIndex(i)}
+                          className={`h-2 rounded-full transition-all duration-200 ${
+                            i === currentImageIndex ? 'bg-primary w-6' : 'bg-white/50 hover:bg-white w-2'
+                          }`}
+                          aria-label={`Go to image ${i + 1}`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
             </motion.div>
 
@@ -131,7 +169,7 @@ const HotelDetail = () => {
                   <div className="space-y-4">
                     {hotel.guestReviews.map((review, i) => (
                       <div key={i} className="flex gap-3 p-3 rounded-xl bg-muted/30">
-                        <div className="w-10 h-10 rounded-full gradient-cta flex items-center justify-center text-primary-foreground text-xs font-bold flex-shrink-0">{review.avatar}</div>
+                        <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-primary-foreground text-xs font-bold flex-shrink-0">{review.avatar}</div>
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-semibold text-sm">{review.name}</span>
@@ -165,7 +203,7 @@ const HotelDetail = () => {
                     </div>
                   </div>
                   <Link to={`/book/hotel/${hotel.id}/step/1`}>
-                    <Button className="w-full h-12 gradient-cta text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity">
+                    <Button className="w-full h-12 bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity">
                       Book Now
                     </Button>
                   </Link>

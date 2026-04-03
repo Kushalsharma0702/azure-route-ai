@@ -134,7 +134,7 @@ const Detail = () => {
                       <div key={i} className="bg-card rounded-2xl border border-border/50 p-5">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <div className="w-9 h-9 rounded-full gradient-cta flex items-center justify-center text-primary-foreground text-xs font-bold">
+                            <div className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-primary-foreground text-xs font-bold">
                               {r.name.split(" ").map(n => n[0]).join("")}
                             </div>
                             <div>
@@ -201,7 +201,7 @@ const Detail = () => {
                   </div>
 
                   <Link to="/booking">
-                    <Button className="w-full h-12 gradient-cta text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity">
+                    <Button className="w-full h-12 bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity">
                       Book Now
                     </Button>
                   </Link>

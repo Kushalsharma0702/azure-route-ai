@@ -78,7 +78,7 @@ const SearchResults = () => {
                             minRating === r ? "bg-primary/10 text-primary border-primary/30" : "bg-muted/50 text-muted-foreground border-border"
                           }`}
                         >
-                          {r}+★
+                          {r}+
                         </button>
                       ))}
                     </div>
@@ -143,7 +143,7 @@ const SearchResults = () => {
                             </div>
                             <div className="flex gap-2">
                               <Button variant="outline" className="rounded-xl text-sm">View Details</Button>
-                              <Button className="rounded-xl gradient-cta text-primary-foreground border-0 text-sm hover:opacity-90 transition-opacity">
+                              <Button className="rounded-xl bg-primary text-primary-foreground text-primary-foreground border-0 text-sm hover:opacity-90 transition-opacity">
                                 Book Now
                               </Button>
                             </div>

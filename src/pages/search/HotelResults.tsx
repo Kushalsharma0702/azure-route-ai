@@ -74,7 +74,7 @@ const HotelResults = () => {
                     <h4 className="text-sm font-semibold mb-3">Rating</h4>
                     {[0, 4, 4.5, 4.8].map((r) => (
                       <button key={r} onClick={() => setMinRating(r)} className={`block w-full text-left px-3 py-2 rounded-lg text-sm mb-1 transition-colors ${minRating === r ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:bg-muted"}`}>
-                        {r === 0 ? "All" : `${r}+ ★`}
+                        {r === 0 ? "All" : `${r}+ `}
                       </button>
                     ))}
                   </div>

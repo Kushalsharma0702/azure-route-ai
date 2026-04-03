@@ -33,7 +33,7 @@ const FlightDetail = () => {
                 {/* Flight hero */}
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-card rounded-2xl shadow-card border border-border/50 p-6">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-14 h-14 rounded-xl gradient-card flex items-center justify-center font-bold text-lg text-primary">{flight.airlineLogo}</div>
+                    <div className="w-14 h-14 rounded-xl bg-card flex items-center justify-center font-bold text-lg text-primary">{flight.airlineLogo}</div>
                     <div>
                       <h1 className="text-xl font-extrabold">{flight.airline}</h1>
                       <p className="text-sm text-muted-foreground">{flight.flightNumber} • {flight.aircraft}</p>
@@ -106,7 +106,7 @@ const FlightDetail = () => {
                   <div className="space-y-4">
                     {flight.reviews.map((review, i) => (
                       <div key={i} className="flex gap-3 p-3 rounded-xl bg-muted/30">
-                        <div className="w-10 h-10 rounded-full gradient-cta flex items-center justify-center text-primary-foreground text-xs font-bold flex-shrink-0">{review.avatar}</div>
+                        <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-primary-foreground text-xs font-bold flex-shrink-0">{review.avatar}</div>
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-semibold text-sm">{review.name}</span>
@@ -145,7 +145,7 @@ const FlightDetail = () => {
                     </div>
                   )}
                   <Link to={`/book/flight/${flight.id}/step/1`}>
-                    <Button className="w-full mt-4 h-12 gradient-cta text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity">
+                    <Button className="w-full mt-4 h-12 bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity">
                       Book Now
                     </Button>
                   </Link>

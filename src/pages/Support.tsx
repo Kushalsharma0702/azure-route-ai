@@ -19,7 +19,7 @@ const Support = () => (
           <div className="grid sm:grid-cols-3 gap-4 mb-12">
             {[
               { icon: Phone, title: "Call Us", desc: "+91 98765 43210", sub: "24/7 support" },
-              { icon: Mail, title: "Email", desc: "support@tripai.com", sub: "Response within 2 hours" },
+              { icon: Mail, title: "Email", desc: "support@routeaura.com", sub: "Response within 2 hours" },
               { icon: MessageSquare, title: "Live Chat", desc: "Chat with us", sub: "Available now" },
             ].map((item) => (
               <motion.div key={item.title} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="bg-card rounded-2xl shadow-card border border-border/50 p-6 text-center">

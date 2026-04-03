@@ -1,137 +1,157 @@
-import { useState } from "react";
+import { useState, type ComponentType } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, Plane, Building, Train, Package, Sparkles } from "lucide-react";
+import { CalendarDays, Search, Flag, ShieldCheck, Briefcase, Building, Train } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import LocationAutoSuggest from "@/components/LocationAutoSuggest";
-import heroBg from "@/assets/hero-bg.jpg";
 
-const tabs = [
-  { id: "flights", label: "Flights", icon: Plane },
-  { id: "hotels", label: "Hotels", icon: Building },
-  { id: "trains", label: "Trains", icon: Train },
-  { id: "packages", label: "Packages", icon: Package },
-  { id: "ai", label: "AI Planner", icon: Sparkles },
+type BookingType = "travel" | "hotel" | "package" | "train";
+
+const bookingOptions: { id: BookingType; label: string; icon: ComponentType<{ className?: string }> }[] = [
+  { id: "travel", label: "Travel Booking", icon: Briefcase },
+  { id: "hotel", label: "Hotel Booking", icon: Building },
+  { id: "package", label: "Packages", icon: ShieldCheck },
+  { id: "train", label: "Train Booking", icon: Train },
 ];
 
 const HeroSection = () => {
-  const [activeTab, setActiveTab] = useState("flights");
   const navigate = useNavigate();
+  const [bookingType, setBookingType] = useState<BookingType>("travel");
+  const [country, setCountry] = useState("India");
+  const [visaType, setVisaType] = useState("Tourist");
+  const [travelDate, setTravelDate] = useState("");
 
   const handleSearch = () => {
-    if (activeTab === "ai") {
-      navigate("/trip-planner");
-    } else {
-      navigate(`/search/${activeTab}`);
-    }
+    const routeMap: Record<BookingType, string> = {
+      travel: "/search/flights",
+      hotel: "/search/hotels",
+      package: "/search/packages",
+      train: "/search/trains",
+    };
+
+    navigate(routeMap[bookingType], {
+      state: {
+        country,
+        visaType,
+        travelDate,
+      },
+    });
   };
 
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-16">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
       <div className="absolute inset-0">
-        <img src={heroBg} alt="Incredible India" className="w-full h-full object-cover" width={1920} height={1080} />
-        <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/50 to-background" />
+        <img
+          src="https://images.unsplash.com/photo-1595815771614-ade9d652a65d?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          alt="Snowy mountain landscape"
+          width={1920}
+          height={1080}
+          loading="eager"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/25" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/35" />
       </div>
 
-      <div className="container relative z-10 py-20">
+      <div className="container relative z-10 py-20 flex flex-col items-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          className="text-center mb-10"
+          className="text-center mb-16"
         >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 backdrop-blur-sm border border-primary/30 mb-6"
-          >
-            <Sparkles className="w-4 h-4 text-primary-foreground" />
-            <span className="text-sm font-medium text-primary-foreground">AI-Powered Indian Travel Planning</span>
-          </motion.div>
-
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4">
-            <span className="text-primary-foreground">Explore Incredible</span>
-            <br />
-            <span className="text-primary-foreground">India with AI 🇮🇳</span>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white mb-4 leading-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.55)]">
+            Explore India <br /> With Confidence
           </h1>
-          <p className="text-lg md:text-xl max-w-2xl mx-auto text-primary-foreground/80">
-            From Kashmir to Kanyakumari — flights, hotels, trains & packages. Let AI craft your perfect Indian journey.
+          <p className="text-lg md:text-xl text-white/90 font-medium max-w-2xl drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]">
+            Book flights, hotels, trains, and packages in one place.
           </p>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="max-w-4xl mx-auto"
+          transition={{ delay: 0.2, duration: 0.6 }}
+          className="w-full max-w-4xl"
         >
-          <div className="glass rounded-2xl shadow-hero p-1">
-            <div className="flex overflow-x-auto gap-1 p-1 mb-1">
-              {tabs.map((tab) => (
+          <div className="glass-effect rounded-3xl p-3 md:p-4 space-y-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              {bookingOptions.map((option) => (
                 <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
-                    activeTab === tab.id
-                      ? "gradient-cta text-primary-foreground shadow-lg"
-                      : "text-muted-foreground hover:bg-muted"
+                  key={option.id}
+                  onClick={() => setBookingType(option.id)}
+                  className={`h-11 rounded-xl px-3 text-sm font-semibold flex items-center justify-center gap-2 transition-colors ${
+                    bookingType === option.id
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-white/70 text-foreground hover:bg-white"
                   }`}
                 >
-                  <tab.icon className="w-4 h-4" />
-                  {tab.label}
+                  <option.icon className="w-4 h-4" />
+                  {option.label}
                 </button>
               ))}
             </div>
 
-            <div className="p-4">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                <div className="md:col-span-1">
-                  <LocationAutoSuggest label="From" placeholder="Delhi (DEL)" />
-                </div>
-                <div className="md:col-span-1">
-                  <LocationAutoSuggest label="To" placeholder="Goa (GOI)" />
-                </div>
-                <div className="md:col-span-1">
-                  <label className="text-xs font-medium text-muted-foreground mb-1 block">Date</label>
-                  <input
-                    type="date"
-                    className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition"
-                  />
-                </div>
-                <div className="md:col-span-1 flex items-end">
-                  <Button
-                    onClick={handleSearch}
-                    className="w-full h-12 gradient-cta text-primary-foreground border-0 rounded-xl text-sm font-semibold shadow-lg hover:opacity-90 transition-opacity"
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+              <div className="bg-white rounded-xl h-14 px-4 flex items-center gap-3">
+                <Flag className="w-4 h-4 text-muted-foreground" />
+                <div className="flex-1">
+                  <label className="text-[10px] uppercase font-bold text-muted-foreground block">Country</label>
+                  <select
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                    className="w-full text-sm font-semibold text-foreground bg-transparent focus:outline-none"
                   >
-                    <Search className="w-4 h-4 mr-2" />
-                    Search
-                  </Button>
+                    <option>India</option>
+                    <option>Switzerland</option>
+                    <option>UAE</option>
+                    <option>Thailand</option>
+                  </select>
                 </div>
               </div>
+
+              <div className="bg-white rounded-xl h-14 px-4 flex items-center gap-3">
+                <ShieldCheck className="w-4 h-4 text-muted-foreground" />
+                <div className="flex-1">
+                  <label className="text-[10px] uppercase font-bold text-muted-foreground block">Visa Type</label>
+                  <select
+                    value={visaType}
+                    onChange={(e) => setVisaType(e.target.value)}
+                    className="w-full text-sm font-semibold text-foreground bg-transparent focus:outline-none"
+                  >
+                    <option>Tourist</option>
+                    <option>Business</option>
+                    <option>Student</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl h-14 px-4 flex items-center gap-3">
+                <CalendarDays className="w-4 h-4 text-muted-foreground" />
+                <div className="flex-1">
+                  <label className="text-[10px] uppercase font-bold text-muted-foreground block">Date</label>
+                  <input
+                    type="date"
+                    value={travelDate}
+                    onChange={(e) => setTravelDate(e.target.value)}
+                    className="w-full text-sm font-semibold text-foreground bg-transparent focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <Button
+                onClick={handleSearch}
+                className="h-14 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+              >
+                <Search className="w-4 h-4 mr-2" />
+                Search
+              </Button>
             </div>
           </div>
         </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="flex flex-wrap justify-center gap-8 mt-10"
-        >
-          {[
-            { value: "50K+", label: "Happy Travelers" },
-            { value: "100+", label: "Indian Destinations" },
-            { value: "4.9★", label: "User Rating" },
-            { value: "24/7", label: "AI Concierge" },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div className="text-2xl font-bold text-primary-foreground">{stat.value}</div>
-              <div className="text-sm text-primary-foreground/60">{stat.label}</div>
-            </div>
-          ))}
-        </motion.div>
       </div>
+      
+      {/* Soft gradient fade at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-10" />
     </section>
   );
 };

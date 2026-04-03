@@ -23,8 +23,8 @@ const Signup = () => {
     }
     setLoading(true);
     setTimeout(() => {
-      localStorage.setItem("tripai_user", JSON.stringify({ email, name }));
-      toast.success("Account created! Welcome to TripAI 🎉");
+      localStorage.setItem("routeaura_user", JSON.stringify({ email, name }));
+      toast.success("Account created! Welcome to RouteAura");
       navigate("/");
     }, 1200);
   };
@@ -33,7 +33,7 @@ const Signup = () => {
     <div className="min-h-screen flex">
       <div className="hidden lg:block lg:w-1/2 relative">
         <img src={heroBg} alt="" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-foreground/60 to-foreground/30" />
+        <div className="absolute inset-0 bg-muted/30  " />
         <div className="absolute inset-0 flex items-center justify-center p-12">
           <div className="text-primary-foreground max-w-md">
             <h2 className="text-4xl font-extrabold mb-4">Start Your Journey</h2>
@@ -49,10 +49,10 @@ const Signup = () => {
           className="w-full max-w-md"
         >
           <Link to="/" className="flex items-center gap-2 font-bold text-xl mb-8">
-            <div className="w-10 h-10 rounded-xl gradient-cta flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center">
               <Plane className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-gradient font-extrabold text-2xl">TripAI</span>
+            <span className="text-primary font-extrabold text-2xl">RouteAura</span>
           </Link>
 
           <h1 className="text-2xl font-extrabold mb-1">Create your account</h1>
@@ -91,7 +91,7 @@ const Signup = () => {
               </div>
             </div>
 
-            <Button type="submit" disabled={loading} className="w-full h-12 gradient-cta text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity">
+            <Button type="submit" disabled={loading} className="w-full h-12 bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity">
               {loading ? (
                 <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full" />
               ) : (

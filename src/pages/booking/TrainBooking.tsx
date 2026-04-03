@@ -144,9 +144,9 @@ const TrainBooking = () => {
             <div className="flex justify-between mt-8">
               <Button variant="outline" onClick={goBack} disabled={currentStep === 1} className="rounded-xl">Back</Button>
               {currentStep < 3 ? (
-                <Button onClick={goNext} className="gradient-cta text-primary-foreground border-0 rounded-xl shadow-lg hover:opacity-90">Continue</Button>
+                <Button onClick={goNext} className="bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl shadow-lg hover:opacity-90">Continue</Button>
               ) : (
-                <Button onClick={handlePay} disabled={processing} className="gradient-cta text-primary-foreground border-0 rounded-xl shadow-lg hover:opacity-90 min-w-[160px]">
+                <Button onClick={handlePay} disabled={processing} className="bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl shadow-lg hover:opacity-90 min-w-[160px]">
                   {processing ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Processing...</> : `Pay ₹${(total - discount).toLocaleString()}`}
                 </Button>
               )}

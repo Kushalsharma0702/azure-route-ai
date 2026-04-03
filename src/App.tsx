@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AnimatePresence } from "framer-motion";
 import FloatingBlobs from "@/components/FloatingBlobs";
+import RouteAuraLoader from "@/components/RouteAuraLoader";
+import { Suspense } from "react";
 import Index from "./pages/Index";
 import SearchResults from "./pages/SearchResults";
 import TripPlanner from "./pages/TripPlanner";
@@ -36,35 +38,39 @@ const queryClient = new QueryClient();
 const AnimatedRoutes = () => {
   const location = useLocation();
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Index />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/search" element={<SearchResults />} />
-        <Route path="/search/flights" element={<FlightResults />} />
-        <Route path="/search/hotels" element={<HotelResults />} />
-        <Route path="/search/trains" element={<TrainResults />} />
-        <Route path="/search/packages" element={<PackageResults />} />
-        <Route path="/flights/:id" element={<FlightDetail />} />
-        <Route path="/hotels/:id" element={<HotelDetail />} />
-        <Route path="/trains/:id" element={<TrainDetail />} />
-        <Route path="/packages/:id" element={<PackageDetail />} />
-        <Route path="/detail/:id" element={<Detail />} />
-        <Route path="/book/flight/:id/step/:step" element={<FlightBooking />} />
-        <Route path="/book/hotel/:id/step/:step" element={<HotelBooking />} />
-        <Route path="/book/train/:id/step/:step" element={<TrainBooking />} />
-        <Route path="/book/package/:id/step/:step" element={<PackageBooking />} />
-        <Route path="/booking" element={<Booking />} />
-        <Route path="/confirmation" element={<Confirmation />} />
-        <Route path="/trip-planner" element={<TripPlanner />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/support" element={<Support />} />
-        <Route path="/terms" element={<Terms />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </AnimatePresence>
+    <>
+      <AnimatePresence mode="wait">
+        <Suspense key={location.pathname} fallback={<RouteAuraLoader />}>
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<Index />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/search" element={<SearchResults />} />
+            <Route path="/search/flights" element={<FlightResults />} />
+            <Route path="/search/hotels" element={<HotelResults />} />
+            <Route path="/search/trains" element={<TrainResults />} />
+            <Route path="/search/packages" element={<PackageResults />} />
+            <Route path="/flights/:id" element={<FlightDetail />} />
+            <Route path="/hotels/:id" element={<HotelDetail />} />
+            <Route path="/trains/:id" element={<TrainDetail />} />
+            <Route path="/packages/:id" element={<PackageDetail />} />
+            <Route path="/detail/:id" element={<Detail />} />
+            <Route path="/book/flight/:id/step/:step" element={<FlightBooking />} />
+            <Route path="/book/hotel/:id/step/:step" element={<HotelBooking />} />
+            <Route path="/book/train/:id/step/:step" element={<TrainBooking />} />
+            <Route path="/book/package/:id/step/:step" element={<PackageBooking />} />
+            <Route path="/booking" element={<Booking />} />
+            <Route path="/confirmation" element={<Confirmation />} />
+            <Route path="/trip-planner" element={<TripPlanner />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+      </AnimatePresence>
+    </>
   );
 };
 

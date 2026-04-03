@@ -51,7 +51,7 @@ const WhyChooseUs = () => {
               whileHover={{ y: -4 }}
               className="bg-card rounded-2xl shadow-card border border-border/50 p-6 text-center hover:shadow-card-hover transition-all"
             >
-              <div className="w-14 h-14 rounded-2xl gradient-cta flex items-center justify-center mx-auto mb-4">
+              <div className="w-14 h-14 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center mx-auto mb-4">
                 <feat.icon className="w-7 h-7 text-primary-foreground" />
               </div>
               <h3 className="font-bold mb-2">{feat.title}</h3>

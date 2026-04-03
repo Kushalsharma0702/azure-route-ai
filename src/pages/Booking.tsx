@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, Tag, CreditCard, Plane, Building, Ticket, User, Plus, Trash2, Check, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -20,12 +22,18 @@ interface Traveler {
 const emptyTraveler: Traveler = { name: "", email: "", phone: "", gender: "", age: "" };
 
 const Booking = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [travelers, setTravelers] = useState<Traveler[]>([{ ...emptyTraveler }]);
   const [selectedRoom, setSelectedRoom] = useState(0);
   const [coupon, setCoupon] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("card");
+  const [cardNumber, setCardNumber] = useState("");
+  const [expiry, setExpiry] = useState("");
+  const [cvv, setCvv] = useState("");
+  const [upiId, setUpiId] = useState("");
 
   const basePrice = 50000;
   const discount = couponApplied ? 5000 : 0;
@@ -49,8 +57,24 @@ const Booking = () => {
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
   const handlePay = () => {
+    if (paymentMethod === "card") {
+      if (!cardNumber.trim() || !expiry.trim() || !cvv.trim()) {
+        toast.error("Please complete all card details");
+        return;
+      }
+    }
+
+    if (paymentMethod === "upi" && !upiId.trim()) {
+      toast.error("Please enter your UPI ID");
+      return;
+    }
+
     setIsSubmitting(true);
-    setTimeout(() => setIsSubmitting(false), 2500);
+    setTimeout(() => {
+      setIsSubmitting(false);
+      toast.success("Payment successful");
+      navigate("/confirmation");
+    }, 1800);
   };
 
   const inputClass = "w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition";
@@ -70,7 +94,6 @@ const Booking = () => {
             <StepProgress steps={steps} currentStep={step} />
 
             <AnimatePresence mode="wait">
-              {/* Step 1: Travelers */}
               {step === 0 && (
                 <motion.div key="step0" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }}>
                   <h2 className="text-xl font-extrabold mb-6">Traveler Details</h2>
@@ -121,12 +144,11 @@ const Booking = () => {
                     </Button>
                   </div>
                   <div className="flex justify-end mt-6">
-                    <Button onClick={next} className="gradient-cta text-primary-foreground border-0 rounded-xl px-8 hover:opacity-90 transition-opacity">Continue</Button>
+                    <Button onClick={next} className="bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl px-8 hover:opacity-90 transition-opacity">Continue</Button>
                   </div>
                 </motion.div>
               )}
 
-              {/* Step 2: Room */}
               {step === 1 && (
                 <motion.div key="step1" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }}>
                   <h2 className="text-xl font-extrabold mb-6">Select Your Room</h2>
@@ -156,12 +178,11 @@ const Booking = () => {
                   </div>
                   <div className="flex justify-between mt-6">
                     <Button variant="outline" onClick={back} className="rounded-xl">Back</Button>
-                    <Button onClick={next} className="gradient-cta text-primary-foreground border-0 rounded-xl px-8 hover:opacity-90 transition-opacity">Continue</Button>
+                    <Button onClick={next} className="bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl px-8 hover:opacity-90 transition-opacity">Continue</Button>
                   </div>
                 </motion.div>
               )}
 
-              {/* Step 3: Review */}
               {step === 2 && (
                 <motion.div key="step2" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }}>
                   <h2 className="text-xl font-extrabold mb-6">Review Booking</h2>
@@ -227,41 +248,95 @@ const Booking = () => {
                   </div>
                   <div className="flex justify-between mt-6">
                     <Button variant="outline" onClick={back} className="rounded-xl">Back</Button>
-                    <Button onClick={next} className="gradient-cta text-primary-foreground border-0 rounded-xl px-8 hover:opacity-90 transition-opacity">Proceed to Pay</Button>
+                    <Button onClick={next} className="bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl px-8 hover:opacity-90 transition-opacity">Proceed to Pay</Button>
                   </div>
                 </motion.div>
               )}
 
-              {/* Step 4: Payment */}
               {step === 3 && (
                 <motion.div key="step3" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.3 }}>
                   <h2 className="text-xl font-extrabold mb-6">Payment</h2>
                   <div className="max-w-lg mx-auto">
                     <div className="bg-card rounded-2xl shadow-card border border-border/50 p-6 space-y-4">
                       <h3 className="font-bold mb-2">Select Payment Method</h3>
-                      {["Credit / Debit Card", "UPI", "Net Banking", "Wallet"].map((method, i) => (
-                        <label key={method} className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${i === 0 ? "border-primary bg-primary/5 ring-2 ring-primary/20" : "border-border/50 hover:bg-muted/30"}`}>
-                          <input type="radio" name="payment" defaultChecked={i === 0} className="accent-primary" />
-                          <span className="text-sm font-medium">{method}</span>
+                      {[
+                        { id: "card", label: "Credit / Debit Card" },
+                        { id: "upi", label: "UPI" },
+                        { id: "netbanking", label: "Net Banking" },
+                        { id: "wallet", label: "Wallet" },
+                      ].map((method) => (
+                        <label
+                          key={method.id}
+                          className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
+                            paymentMethod === method.id
+                              ? "border-primary bg-primary/5 ring-2 ring-primary/20"
+                              : "border-border/50 hover:bg-muted/30"
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="payment"
+                            value={method.id}
+                            checked={paymentMethod === method.id}
+                            onChange={(e) => setPaymentMethod(e.target.value)}
+                            className="accent-primary"
+                          />
+                          <span className="text-sm font-medium">{method.label}</span>
                         </label>
                       ))}
 
-                      <div className="pt-4 space-y-3">
-                        <div>
-                          <label className="text-xs font-medium text-muted-foreground mb-1 block">Card Number</label>
-                          <input className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="4242 4242 4242 4242" />
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
+                      {paymentMethod === "card" && (
+                        <div className="pt-4 space-y-3">
                           <div>
-                            <label className="text-xs font-medium text-muted-foreground mb-1 block">Expiry</label>
-                            <input className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="MM/YY" />
+                            <label className="text-xs font-medium text-muted-foreground mb-1 block">Card Number</label>
+                            <input
+                              value={cardNumber}
+                              onChange={(e) => setCardNumber(e.target.value)}
+                              className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                              placeholder="4242 4242 4242 4242"
+                            />
                           </div>
-                          <div>
-                            <label className="text-xs font-medium text-muted-foreground mb-1 block">CVV</label>
-                            <input className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" placeholder="***" type="password" />
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="text-xs font-medium text-muted-foreground mb-1 block">Expiry</label>
+                              <input
+                                value={expiry}
+                                onChange={(e) => setExpiry(e.target.value)}
+                                className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                                placeholder="MM/YY"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs font-medium text-muted-foreground mb-1 block">CVV</label>
+                              <input
+                                value={cvv}
+                                onChange={(e) => setCvv(e.target.value)}
+                                className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                                placeholder="***"
+                                type="password"
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      )}
+
+                      {paymentMethod === "upi" && (
+                        <div className="pt-4">
+                          <label className="text-xs font-medium text-muted-foreground mb-1 block">UPI ID</label>
+                          <input
+                            value={upiId}
+                            onChange={(e) => setUpiId(e.target.value)}
+                            className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                            placeholder="name@upi"
+                          />
+                        </div>
+                      )}
+
+                      {(paymentMethod === "netbanking" || paymentMethod === "wallet") && (
+                        <div className="pt-4 text-sm text-muted-foreground">
+                          You will be redirected to complete payment via {paymentMethod === "netbanking" ? "net banking" : "your wallet"}.
+                        </div>
+                      )}
 
                       <div className="border-t border-border pt-4 flex justify-between font-bold text-lg">
                         <span>Pay</span>
@@ -271,7 +346,7 @@ const Booking = () => {
                       <Button
                         onClick={handlePay}
                         disabled={isSubmitting}
-                        className="w-full h-12 gradient-cta text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity disabled:opacity-60"
+                        className="w-full h-12 bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity disabled:opacity-60"
                       >
                         {isSubmitting ? (
                           <Loader2 className="w-5 h-5 animate-spin" />

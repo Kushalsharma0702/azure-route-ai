@@ -123,7 +123,7 @@ const FlightResults = () => {
                       <Link to={`/flights/${flight.id}`} className="block bg-card rounded-2xl shadow-card border border-border/50 p-5 hover:shadow-card-hover transition-all glow-card">
                         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                           <div className="flex items-center gap-3 sm:w-32">
-                            <div className="w-10 h-10 rounded-xl gradient-card flex items-center justify-center font-bold text-sm text-primary">
+                            <div className="w-10 h-10 rounded-xl bg-card flex items-center justify-center font-bold text-sm text-primary">
                               {flight.airlineLogo}
                             </div>
                             <div>

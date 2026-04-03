@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
 const moods = [
-  { id: "chill", label: "🏖️ Chill", color: "bg-secondary/20 text-foreground border-secondary" },
-  { id: "adventure", label: "🏔️ Adventure", color: "bg-success/10 text-foreground border-success/30" },
-  { id: "romantic", label: "💕 Romantic", color: "bg-primary/10 text-foreground border-primary/30" },
-  { id: "cultural", label: "🏛️ Cultural", color: "bg-accent/20 text-foreground border-accent" },
+  { id: "chill", label: " Chill", color: "bg-secondary/20 text-foreground border-secondary" },
+  { id: "adventure", label: " Adventure", color: "bg-success/10 text-foreground border-success/30" },
+  { id: "romantic", label: " Romantic", color: "bg-primary/10 text-foreground border-primary/30" },
+  { id: "cultural", label: " Cultural", color: "bg-accent/20 text-foreground border-accent" },
 ];
 
 const sampleItinerary = [
@@ -44,7 +44,7 @@ const AITripPlanner = () => {
             <Sparkles className="w-4 h-4" /> AI Trip Planner
           </span>
           <h2 className="text-3xl md:text-5xl font-extrabold mb-4">
-            Let AI Plan Your <span className="text-gradient">Perfect Indian Trip</span>
+            Let AI Plan Your <span className="text-primary">Perfect Indian Trip</span>
           </h2>
           <p className="text-muted-foreground max-w-lg mx-auto">
             Tell us your preferences and our AI creates a personalized day-by-day itinerary across India in seconds.
@@ -117,7 +117,7 @@ const AITripPlanner = () => {
               <Button
                 onClick={handleGenerate}
                 disabled={generating}
-                className="w-full h-12 gradient-cta text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity"
+                className="w-full h-12 bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity"
               >
                 {generating ? (
                   <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generating Itinerary...</>
@@ -135,7 +135,7 @@ const AITripPlanner = () => {
             className="space-y-4"
           >
             <div className="text-sm font-medium text-muted-foreground mb-2">
-              {showItinerary ? "✨ Your AI-Generated Itinerary" : "Sample AI-Generated Itinerary"}
+              {showItinerary ? " Your AI-Generated Itinerary" : "Sample AI-Generated Itinerary"}
             </div>
             <AnimatePresence mode="wait">
               {sampleItinerary.map((day, i) => (
@@ -148,7 +148,7 @@ const AITripPlanner = () => {
                   className="bg-background rounded-2xl shadow-card border border-border/50 p-5 hover:shadow-card-hover transition-shadow"
                 >
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-xl gradient-cta flex items-center justify-center text-primary-foreground font-bold text-sm">
+                    <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center text-primary-foreground font-bold text-sm">
                       D{day.day}
                     </div>
                     <div>

@@ -28,18 +28,18 @@ const PackageDetail = () => {
 
           <div className="container mt-8">
             {/* Gallery */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
-              <div className="md:col-span-2 h-64 md:h-80 rounded-2xl overflow-hidden relative">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 lg:grid-cols-[1.7fr_1fr] gap-3 mb-8">
+              <div className="h-72 md:h-[420px] rounded-2xl overflow-hidden relative">
                 <img src={pkg.images[0]} alt={pkg.title} className="w-full h-full object-cover" />
-                <div className="absolute top-3 left-3 flex gap-2">
+                <div className="absolute top-3 left-3 flex flex-wrap gap-2">
                   {pkg.badges.map((b) => (
-                    <span key={b} className="text-xs px-3 py-1 rounded-full bg-primary text-primary-foreground font-medium">{b}</span>
+                    <span key={b} className="text-xs px-3 py-1 rounded-full bg-primary text-primary-foreground font-medium shadow-sm">{b}</span>
                   ))}
                 </div>
               </div>
-              <div className="hidden md:grid gap-3">
+              <div className="grid grid-cols-2 lg:grid-cols-1 gap-3 lg:h-[420px]">
                 {pkg.images.slice(1, 3).map((img, i) => (
-                  <div key={i} className="h-[calc(50%-6px)] rounded-2xl overflow-hidden">
+                  <div key={i} className="h-40 md:h-full lg:flex-1 rounded-2xl overflow-hidden">
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </div>
                 ))}
@@ -60,7 +60,7 @@ const PackageDetail = () => {
 
                 {/* Highlights */}
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-card rounded-2xl shadow-card border border-border/50 p-6">
-                  <h2 className="font-bold text-lg mb-4">✨ Highlights</h2>
+                  <h2 className="font-bold text-lg mb-4"> Highlights</h2>
                   <div className="grid sm:grid-cols-2 gap-3">
                     {pkg.highlights.map((h) => (
                       <div key={h} className="flex items-center gap-2 text-sm p-3 rounded-xl bg-primary/5">
@@ -77,7 +77,7 @@ const PackageDetail = () => {
                   <div className="space-y-4">
                     {pkg.itinerary.map((day) => (
                       <div key={day.day} className="flex gap-4">
-                        <div className="w-12 h-12 rounded-xl gradient-cta flex items-center justify-center text-primary-foreground font-bold text-sm flex-shrink-0">D{day.day}</div>
+                        <div className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center text-primary-foreground font-bold text-sm flex-shrink-0">D{day.day}</div>
                         <div>
                           <h3 className="font-semibold text-sm">{day.title}</h3>
                           <div className="flex flex-wrap gap-1 mt-1">
@@ -143,7 +143,7 @@ const PackageDetail = () => {
                     </div>
                   )}
                   <Link to={`/book/package/${pkg.id}/step/1`}>
-                    <Button className="w-full h-12 gradient-cta text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity">
+                    <Button className="w-full h-12 bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity">
                       Book This Package
                     </Button>
                   </Link>

@@ -47,7 +47,7 @@ const Dashboard = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <h1 className="text-2xl md:text-3xl font-extrabold">Welcome back, Traveler! 🙏</h1>
+            <h1 className="text-2xl md:text-3xl font-extrabold">Welcome back, Traveler! </h1>
             <p className="text-muted-foreground mt-1">Manage your trips, bookings, and price alerts across India</p>
           </motion.div>
 
@@ -58,7 +58,7 @@ const Dashboard = () => {
                 onClick={() => setActiveTab(tab)}
                 className={`px-5 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
                   activeTab === tab
-                    ? "gradient-cta text-primary-foreground shadow-lg"
+                    ? "bg-primary text-primary-foreground text-primary-foreground shadow-lg"
                     : "text-muted-foreground hover:bg-muted"
                 }`}
               >

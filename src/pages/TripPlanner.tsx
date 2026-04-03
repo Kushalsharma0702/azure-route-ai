@@ -34,7 +34,7 @@ const TripPlanner = () => {
             className="text-center mb-12"
           >
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-              ✨ AI-Generated Itinerary
+               AI-Generated Itinerary
             </span>
             <h1 className="text-3xl md:text-4xl font-extrabold mb-2">5 Days in Rajasthan — Jaipur & Udaipur</h1>
             <p className="text-muted-foreground">Cultural mood • ₹25,000 budget • 2 travelers • From Delhi</p>
@@ -51,7 +51,7 @@ const TripPlanner = () => {
                   className="bg-card rounded-2xl shadow-card border border-border/50 p-6"
                 >
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-xl gradient-cta flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center">
                       <span className="text-primary-foreground font-bold">D{day.day}</span>
                     </div>
                     <div>
@@ -108,7 +108,7 @@ const TripPlanner = () => {
                 </div>
 
                 <Link to="/book/package/pk-1/step/1">
-                  <Button className="w-full mt-6 h-12 gradient-cta text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity">
+                  <Button className="w-full mt-6 h-12 bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity">
                     Book Entire Trip @ ₹25,000
                   </Button>
                 </Link>

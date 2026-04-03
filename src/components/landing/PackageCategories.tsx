@@ -29,7 +29,7 @@ const PackageCategories = () => {
             >
               <Link
                 to="/search/packages"
-                className={`block bg-gradient-to-br ${cat.color} rounded-2xl p-6 text-center border border-border/30 hover:shadow-card-hover transition-shadow`}
+                className={`block bg-muted/30 ${cat.color} rounded-2xl p-6 text-center border border-border/30 hover:shadow-card-hover transition-shadow`}
               >
                 <div className="text-4xl mb-3">{cat.icon}</div>
                 <h3 className="font-bold text-sm mb-1">{cat.title}</h3>

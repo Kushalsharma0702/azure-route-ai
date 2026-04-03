@@ -2,9 +2,11 @@ import { motion } from "framer-motion";
 import { Star, Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trendingDeals } from "@/data/mockData";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const TrendingDeals = () => {
+  const navigate = useNavigate();
+  
   return (
     <section className="py-24" id="deals">
       <div className="container">
@@ -15,7 +17,7 @@ const TrendingDeals = () => {
           className="flex flex-col md:flex-row md:items-end justify-between mb-12"
         >
           <div>
-            <span className="text-sm font-medium text-primary mb-2 block">🔥 Trending Now</span>
+            <span className="text-sm font-medium text-primary mb-2 block"> Trending Now</span>
             <h2 className="text-3xl md:text-4xl font-extrabold">Top Travel Deals</h2>
             <p className="text-muted-foreground mt-2">Handpicked deals with the best prices — grab them before they're gone!</p>
           </div>
@@ -75,7 +77,10 @@ const TrendingDeals = () => {
                   <span className="text-sm text-muted-foreground line-through">{deal.originalPrice}</span>
                   <span className="text-xs text-muted-foreground">/ person</span>
                 </div>
-                <Button className="w-full rounded-xl gradient-cta text-primary-foreground border-0 hover:opacity-90 transition-opacity">
+                <Button 
+                  onClick={() => navigate(`/search/packages?dest=${encodeURIComponent(deal.destination)}`)}
+                  className="w-full rounded-xl bg-primary text-primary-foreground text-primary-foreground border-0 hover:opacity-90 transition-opacity"
+                >
                   Book Now
                 </Button>
               </div>

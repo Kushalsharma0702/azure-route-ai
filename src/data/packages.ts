@@ -224,4 +224,41 @@ export const packages: Package[] = [
     ],
     policies: { cancellation: "50% refund if cancelled 15 days before departure", payment: "30% advance, rest 10 days before travel" },
   },
+  {
+    id: "pk-6",
+    title: "Mathura & Vrindavan Spiritual Journey",
+    destination: "Mathura-Vrindavan-Gokul-Nandgaon-Ramanriti",
+    image: varanasi,
+    images: [
+      varanasi,
+      "https://images.unsplash.com/photo-1599567894871-90b85d841e4f?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1599567893197-37f33ad3abc9?w=800&h=600&fit=crop"
+    ],
+    duration: "5N/6D",
+    price: 12999,
+    originalPrice: 18999,
+    rating: 4.8,
+    reviews: 1540,
+    inclusions: ["AC Transport", "3-Star Hotels", "Daily Breakfast & Dinner", "Temple Entry Fees", "Local Hindi/English Guide", "All Transfers"],
+    exclusions: ["Flights", "Lunch", "Photography Permits", "Personal Expenses"],
+    itinerary: [
+      { day: 1, title: "Arrival in Mathura", activities: ["Train/Bus station pickup", "Hotel check-in", "Krishna Janmasthan Temple visit", "Ghat exploration at evening aarti", "Local street food dinner"] },
+      { day: 2, title: "Mathura & Gokul", activities: ["Banke Bihari Temple", "Dwarkadhish Temple", "Drive to Gokul", "Govardhan Hill circumambulation (Parikrama)", "Nanda Sarovar visit", "Dinner with local family"] },
+      { day: 3, title: "Vrindavan Divine", activities: ["Banke Bihari Temple (early morning)", "Radha Raman Temple", "ISKCON Temple", "Govind Dev Ji Temple", "Radha Kund & Shyam Kund", "Kirtan at evening"] },
+      { day: 4, title: "Nandgaon & Ramanriti", activities: ["Drive to Nandgaon", "Nand Bhawan (Krishna's childhood home)", "Local market exploration", "Ramanriti village visit", "Radhavallabh Temple", "Traditional Rajasthani evening meal"] },
+      { day: 5, title: "Spiritual Immersion", activities: ["Sunrise meditation & yoga at temple", "Brahma Kund visit", "Local village walk & cultural exchange", "Sufi evening at Taj Mahal nearby (Agra - 60km)", "Traditional Krishna Leela drama or music session"] },
+      { day: 6, title: "Departure", activities: ["Breakfast", "Last-minute temple darshan", "Station/airport transfer"] },
+    ],
+    badges: ["31% OFF", "Spiritual Tour"],
+    category: "Pilgrimage",
+    description: "Embark on a sacred journey through the divine lands of Krishna. Visit the holy sites of Mathura, Vrindavan, Gokul, Nandgaon, and Ramanriti — walk in the footsteps of Lord Krishna with spiritual guides and devotional experiences.",
+    highlights: ["Krishna Janmasthan Temple in Mathura", "Vrindavan temple circuit with local guide", "Govardhan Hill Parikrama (circumambulation)", "Early morning aartis and kirtans", "Village stays with local families"],
+    addOns: [
+      { id: "ao1", name: "Taj Mahal Day Trip", description: "Full day guided tour to Taj Mahal from Mathura", price: 3999 },
+      { id: "ao2", name: "Spiritual Yoga Session", description: "5-day morning yoga & meditation program", price: 2999 },
+      { id: "ao3", name: "Traditional Cooking Class", description: "Learn to make Krishna's favorite sweets (Kheer, Laddu)", price: 1999 },
+    ],
+    policies: { cancellation: "Full refund if cancelled 10 days before departure", payment: "25% advance, rest 7 days before travel" },
+  },
 ];
+
