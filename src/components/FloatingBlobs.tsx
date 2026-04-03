@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
 
 const blobs = [
-  { size: 320, x: "10%", y: "20%", delay: 0, color: "hsl(230 80% 56% / 0.08)" },
-  { size: 260, x: "75%", y: "10%", delay: 2, color: "hsl(262 60% 55% / 0.07)" },
-  { size: 200, x: "60%", y: "70%", delay: 4, color: "hsl(280 70% 50% / 0.06)" },
-  { size: 180, x: "20%", y: "80%", delay: 1, color: "hsl(230 80% 56% / 0.05)" },
-  { size: 140, x: "85%", y: "50%", delay: 3, color: "hsl(262 60% 55% / 0.06)" },
+  { size: 320, x: "10%", y: "20%", delay: 0, color: "hsl(10 38% 56% / 0.06)" },
+  { size: 260, x: "75%", y: "10%", delay: 2, color: "hsl(37 100% 84% / 0.08)" },
+  { size: 200, x: "60%", y: "70%", delay: 4, color: "hsl(22 56% 75% / 0.06)" },
+  { size: 180, x: "20%", y: "80%", delay: 1, color: "hsl(31 21% 48% / 0.05)" },
+  { size: 140, x: "85%", y: "50%", delay: 3, color: "hsl(10 38% 56% / 0.05)" },
 ];
 
 const FloatingBlobs = () => (

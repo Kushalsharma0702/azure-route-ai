@@ -8,21 +8,31 @@ const allLocations = [
   { city: "New Delhi", code: "DEL", country: "India", type: "city" },
   { city: "Mumbai", code: "BOM", country: "India", type: "city" },
   { city: "Bangalore", code: "BLR", country: "India", type: "city" },
-  { city: "Bali", code: "DPS", country: "Indonesia", type: "city" },
-  { city: "Bangkok", code: "BKK", country: "Thailand", type: "city" },
-  { city: "Dubai", code: "DXB", country: "UAE", type: "city" },
-  { city: "Singapore", code: "SIN", country: "Singapore", type: "city" },
-  { city: "Paris", code: "CDG", country: "France", type: "city" },
-  { city: "London", code: "LHR", country: "United Kingdom", type: "city" },
-  { city: "Tokyo", code: "NRT", country: "Japan", type: "city" },
-  { city: "Maldives", code: "MLE", country: "Maldives", type: "city" },
-  { city: "Santorini", code: "JTR", country: "Greece", type: "city" },
-  { city: "Switzerland", code: "ZRH", country: "Switzerland", type: "country" },
-  { city: "Goa", code: "GOI", country: "India", type: "city" },
-  { city: "Jaipur", code: "JAI", country: "India", type: "city" },
   { city: "Chennai", code: "MAA", country: "India", type: "city" },
   { city: "Kolkata", code: "CCU", country: "India", type: "city" },
   { city: "Hyderabad", code: "HYD", country: "India", type: "city" },
+  { city: "Goa", code: "GOI", country: "India", type: "city" },
+  { city: "Jaipur", code: "JAI", country: "India", type: "city" },
+  { city: "Udaipur", code: "UDR", country: "India", type: "city" },
+  { city: "Varanasi", code: "VNS", country: "India", type: "city" },
+  { city: "Srinagar", code: "SXR", country: "India", type: "city" },
+  { city: "Kochi", code: "COK", country: "India", type: "city" },
+  { city: "Ahmedabad", code: "AMD", country: "India", type: "city" },
+  { city: "Pune", code: "PNQ", country: "India", type: "city" },
+  { city: "Lucknow", code: "LKO", country: "India", type: "city" },
+  { city: "Amritsar", code: "ATQ", country: "India", type: "city" },
+  { city: "Manali", code: "KUU", country: "India", type: "city" },
+  { city: "Shimla", code: "SLV", country: "India", type: "city" },
+  { city: "Rishikesh", code: "DED", country: "India", type: "city" },
+  { city: "Port Blair", code: "IXZ", country: "India", type: "city" },
+  { city: "Leh", code: "IXL", country: "India", type: "city" },
+  { city: "Dehradun", code: "DED", country: "India", type: "city" },
+  { city: "Thiruvananthapuram", code: "TRV", country: "India", type: "city" },
+  { city: "Jodhpur", code: "JDH", country: "India", type: "city" },
+  { city: "Agra", code: "AGR", country: "India", type: "city" },
+  { city: "Darjeeling", code: "IXB", country: "India", type: "city" },
+  { city: "Mysore", code: "MYQ", country: "India", type: "city" },
+  { city: "Coimbatore", code: "CJB", country: "India", type: "city" },
 ];
 
 interface Props {
@@ -32,7 +42,7 @@ interface Props {
   onChange?: (value: string) => void;
 }
 
-const LocationAutoSuggest = ({ placeholder = "Search city or airport...", label, value: externalValue, onChange }: Props) => {
+const LocationAutoSuggest = ({ placeholder = "Search Indian city...", label, value: externalValue, onChange }: Props) => {
   const [query, setQuery] = useState(externalValue || "");
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -43,8 +53,7 @@ const LocationAutoSuggest = ({ placeholder = "Search city or airport...", label,
     ? allLocations.filter(
         (l) =>
           l.city.toLowerCase().includes(query.toLowerCase()) ||
-          l.code.toLowerCase().includes(query.toLowerCase()) ||
-          l.country.toLowerCase().includes(query.toLowerCase())
+          l.code.toLowerCase().includes(query.toLowerCase())
       ).slice(0, 6)
     : [];
 
@@ -128,7 +137,7 @@ const LocationAutoSuggest = ({ placeholder = "Search city or airport...", label,
           >
             {filtered.map((loc, i) => (
               <button
-                key={`${loc.city}-${loc.code}`}
+                key={`${loc.city}-${loc.code}-${i}`}
                 onClick={() => selectLocation(loc)}
                 onMouseEnter={() => setActiveIndex(i)}
                 className={`w-full flex items-center gap-3 px-4 py-3 text-left text-sm transition-colors ${
@@ -138,7 +147,7 @@ const LocationAutoSuggest = ({ placeholder = "Search city or airport...", label,
                 <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <div className="font-medium truncate">{highlightMatch(loc.city)}</div>
-                  <div className="text-xs text-muted-foreground">{loc.country} • {loc.code}</div>
+                  <div className="text-xs text-muted-foreground">India • {loc.code}</div>
                 </div>
                 <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">{loc.type}</span>
               </button>

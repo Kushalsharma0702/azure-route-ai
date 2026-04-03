@@ -48,7 +48,7 @@ export const trains: Train[] = [
     ],
     badges: ["Superfast", "Pantry Car"],
     reviews: [
-      { name: "Suresh P.", avatar: "SP", rating: 4, date: "1 week ago", text: "Comfortable journey with good food. On-time arrival." },
+      { name: "Suresh P.", avatar: "SP", rating: 4, date: "1 week ago", text: "Comfortable journey with good food. On-time arrival at Mumbai Central." },
     ],
   },
   {
@@ -71,7 +71,7 @@ export const trains: Train[] = [
     ],
     badges: ["Day Train", "Meals Included"],
     reviews: [
-      { name: "Kavita R.", avatar: "KR", rating: 5, date: "3 days ago", text: "Best day train! Clean coaches and excellent catering." },
+      { name: "Kavita R.", avatar: "KR", rating: 5, date: "3 days ago", text: "Best day train in India! Clean coaches and excellent catering service." },
     ],
   },
   {
@@ -96,7 +96,7 @@ export const trains: Train[] = [
     ],
     badges: ["Non-stop", "Premium"],
     reviews: [
-      { name: "Deepak V.", avatar: "DV", rating: 4, date: "2 weeks ago", text: "Non-stop service is great. Saves a lot of time." },
+      { name: "Deepak V.", avatar: "DV", rating: 4, date: "2 weeks ago", text: "Non-stop service is great. Saves a lot of time between Mumbai and Delhi." },
     ],
   },
   {
@@ -117,9 +117,33 @@ export const trains: Train[] = [
       { id: "CC", name: "AC Chair Car", code: "CC", price: 1760, available: 72, total: 240 },
       { id: "EC", name: "Executive Chair", code: "EC", price: 3310, available: 18, total: 48 },
     ],
-    badges: ["Semi High Speed", "New"],
+    badges: ["Semi High Speed", "India's Pride"],
     reviews: [
-      { name: "Ankit M.", avatar: "AM", rating: 5, date: "1 week ago", text: "World-class train! Super clean, fast, and comfortable." },
+      { name: "Ankit M.", avatar: "AM", rating: 5, date: "1 week ago", text: "World-class Indian train! Super clean, fast, and comfortable. Proud of Indian Railways." },
+    ],
+  },
+  {
+    id: "tr-5",
+    name: "Kerala Express",
+    number: "12625",
+    from: "New Delhi",
+    fromCode: "NDLS",
+    to: "Trivandrum Central",
+    toCode: "TVC",
+    departureTime: "11:25",
+    arrivalTime: "19:45",
+    duration: "44h 20m",
+    day: "Daily",
+    distance: "3,054 km",
+    pantry: true,
+    classes: [
+      { id: "2A", name: "Second AC", code: "2A", price: 3850, available: 18, total: 54 },
+      { id: "3A", name: "Third AC", code: "3A", price: 2650, available: 45, total: 120 },
+      { id: "SL", name: "Sleeper", code: "SL", price: 980, available: 200, total: 400 },
+    ],
+    badges: ["Longest Route", "Popular"],
+    reviews: [
+      { name: "Meera N.", avatar: "MN", rating: 4, date: "1 month ago", text: "Long journey but comfortable. The scenic views through Western Ghats are worth it." },
     ],
   },
 ];

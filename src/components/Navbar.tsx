@@ -1,13 +1,15 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plane, Menu, X, User } from "lucide-react";
+import { Plane, Menu, X, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const navLinks = [
   { label: "Home", path: "/" },
   { label: "Flights", path: "/search/flights" },
   { label: "Hotels", path: "/search/hotels" },
+  { label: "Trains", path: "/search/trains" },
   { label: "Packages", path: "/search/packages" },
   { label: "AI Planner", path: "/trip-planner" },
   { label: "My Trips", path: "/dashboard" },
@@ -15,7 +17,21 @@ const navLinks = [
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const stored = localStorage.getItem("tripai_user");
+    if (stored) setUser(JSON.parse(stored));
+  }, [location]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("tripai_user");
+    setUser(null);
+    toast.success("Logged out successfully");
+    navigate("/");
+  };
 
   return (
     <motion.nav
@@ -31,7 +47,6 @@ const Navbar = () => {
           <span className="text-gradient font-extrabold">TripAI</span>
         </Link>
 
-        {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => (
             <Link
@@ -49,15 +64,32 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          <Button variant="ghost" size="sm" className="text-muted-foreground">
-            <User className="w-4 h-4 mr-2" /> Login
-          </Button>
-          <Button size="sm" className="gradient-cta text-primary-foreground border-0 shadow-lg hover:opacity-90 transition-opacity">
-            Sign Up
-          </Button>
+          {user ? (
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full gradient-cta flex items-center justify-center text-primary-foreground font-bold text-xs">
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+              <span className="text-sm font-medium">{user.name}</span>
+              <Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground">
+                <LogOut className="w-4 h-4" />
+              </Button>
+            </div>
+          ) : (
+            <>
+              <Link to="/login">
+                <Button variant="ghost" size="sm" className="text-muted-foreground">
+                  <User className="w-4 h-4 mr-2" /> Login
+                </Button>
+              </Link>
+              <Link to="/signup">
+                <Button size="sm" className="gradient-cta text-primary-foreground border-0 shadow-lg hover:opacity-90 transition-opacity">
+                  Sign Up
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
 
-        {/* Mobile toggle */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
           className="md:hidden p-2 rounded-lg hover:bg-muted"
@@ -66,7 +98,6 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -91,8 +122,14 @@ const Navbar = () => {
                 </Link>
               ))}
               <div className="flex gap-2 pt-2">
-                <Button variant="outline" size="sm" className="flex-1">Login</Button>
-                <Button size="sm" className="flex-1 gradient-cta text-primary-foreground border-0">Sign Up</Button>
+                {user ? (
+                  <Button variant="outline" size="sm" className="flex-1" onClick={() => { handleLogout(); setMobileOpen(false); }}>Logout</Button>
+                ) : (
+                  <>
+                    <Link to="/login" className="flex-1" onClick={() => setMobileOpen(false)}><Button variant="outline" size="sm" className="w-full">Login</Button></Link>
+                    <Link to="/signup" className="flex-1" onClick={() => setMobileOpen(false)}><Button size="sm" className="w-full gradient-cta text-primary-foreground border-0">Sign Up</Button></Link>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>

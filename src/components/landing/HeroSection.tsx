@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, Plane, Building, Train, Package, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,12 +16,20 @@ const tabs = [
 
 const HeroSection = () => {
   const [activeTab, setActiveTab] = useState("flights");
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    if (activeTab === "ai") {
+      navigate("/trip-planner");
+    } else {
+      navigate(`/search/${activeTab}`);
+    }
+  };
 
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-16">
-      {/* Background */}
       <div className="absolute inset-0">
-        <img src={heroBg} alt="" className="w-full h-full object-cover" width={1920} height={1080} />
+        <img src={heroBg} alt="Incredible India" className="w-full h-full object-cover" width={1920} height={1080} />
         <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 via-foreground/50 to-background" />
       </div>
 
@@ -38,20 +47,19 @@ const HeroSection = () => {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 backdrop-blur-sm border border-primary/30 mb-6"
           >
             <Sparkles className="w-4 h-4 text-primary-foreground" />
-            <span className="text-sm font-medium text-primary-foreground">AI-Powered Travel Planning</span>
+            <span className="text-sm font-medium text-primary-foreground">AI-Powered Indian Travel Planning</span>
           </motion.div>
 
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4">
-            <span className="text-primary-foreground">Plan Your Trip in</span>
+            <span className="text-primary-foreground">Explore Incredible</span>
             <br />
-            <span className="text-primary-foreground">Seconds with AI 🚀</span>
+            <span className="text-primary-foreground">India with AI 🇮🇳</span>
           </h1>
           <p className="text-lg md:text-xl max-w-2xl mx-auto text-primary-foreground/80">
-            Flights, Hotels, Packages — all in one place. Let our AI craft your perfect journey.
+            From Kashmir to Kanyakumari — flights, hotels, trains & packages. Let AI craft your perfect Indian journey.
           </p>
         </motion.div>
 
-        {/* Search Card */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -59,7 +67,6 @@ const HeroSection = () => {
           className="max-w-4xl mx-auto"
         >
           <div className="glass rounded-2xl shadow-hero p-1">
-            {/* Tabs */}
             <div className="flex overflow-x-auto gap-1 p-1 mb-1">
               {tabs.map((tab) => (
                 <button
@@ -77,14 +84,13 @@ const HeroSection = () => {
               ))}
             </div>
 
-            {/* Search Fields */}
             <div className="p-4">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div className="md:col-span-1">
                   <LocationAutoSuggest label="From" placeholder="Delhi (DEL)" />
                 </div>
                 <div className="md:col-span-1">
-                  <LocationAutoSuggest label="To" placeholder="Bali, Indonesia" />
+                  <LocationAutoSuggest label="To" placeholder="Goa (GOI)" />
                 </div>
                 <div className="md:col-span-1">
                   <label className="text-xs font-medium text-muted-foreground mb-1 block">Date</label>
@@ -94,7 +100,10 @@ const HeroSection = () => {
                   />
                 </div>
                 <div className="md:col-span-1 flex items-end">
-                  <Button className="w-full h-12 gradient-cta text-primary-foreground border-0 rounded-xl text-sm font-semibold shadow-lg hover:opacity-90 transition-opacity">
+                  <Button
+                    onClick={handleSearch}
+                    className="w-full h-12 gradient-cta text-primary-foreground border-0 rounded-xl text-sm font-semibold shadow-lg hover:opacity-90 transition-opacity"
+                  >
                     <Search className="w-4 h-4 mr-2" />
                     Search
                   </Button>
@@ -104,7 +113,6 @@ const HeroSection = () => {
           </div>
         </motion.div>
 
-        {/* Stats */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -113,9 +121,9 @@ const HeroSection = () => {
         >
           {[
             { value: "50K+", label: "Happy Travelers" },
-            { value: "200+", label: "Destinations" },
+            { value: "100+", label: "Indian Destinations" },
             { value: "4.9★", label: "User Rating" },
-            { value: "24/7", label: "AI Support" },
+            { value: "24/7", label: "AI Concierge" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
               <div className="text-2xl font-bold text-primary-foreground">{stat.value}</div>
