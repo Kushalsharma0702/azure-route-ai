@@ -28,6 +28,8 @@ import Confirmation from "./pages/Confirmation";
 import Support from "./pages/Support";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +39,8 @@ const AnimatedRoutes = () => {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Index />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         <Route path="/search" element={<SearchResults />} />
         <Route path="/search/flights" element={<FlightResults />} />
         <Route path="/search/hotels" element={<HotelResults />} />
