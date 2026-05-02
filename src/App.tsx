@@ -32,6 +32,10 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import CopilotPage from "./pages/CopilotPage";
+import LiveStatusPage from "./pages/LiveStatusPage";
+import VoiceAssistant from "./pages/VoiceAssistant";
+import HiddenGems from "./pages/HiddenGems";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +67,10 @@ const AnimatedRoutes = () => {
             <Route path="/confirmation" element={<Confirmation />} />
             <Route path="/trip-planner" element={<TripPlanner />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/copilot" element={<CopilotPage />} />
+            <Route path="/live-status" element={<LiveStatusPage />} />
+            <Route path="/voice-assistant" element={<VoiceAssistant />} />
+            <Route path="/hidden-gems" element={<HiddenGems />} />
             <Route path="/support" element={<Support />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />

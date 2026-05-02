@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plane, User, ChevronDown, LogOut, Menu, X } from "lucide-react";
+import { Plane, User, ChevronDown, LogOut, Menu, X, Sparkles } from "lucide-react";
 import { useState } from "react";
 
 const navLinks = [
@@ -11,10 +11,18 @@ const navLinks = [
   { label: "Support", path: "/support" },
 ];
 
+const aiFeatures = [
+  { label: "Trip Copilot", path: "/copilot", icon: "✨" },
+  { label: "Live Reality", path: "/live-status", icon: "📍" },
+  { label: "Voice Assistant", path: "/voice-assistant", icon: "🎤" },
+  { label: "Hidden Gems", path: "/hidden-gems", icon: "💎" },
+];
+
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [aiMenuOpen, setAiMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
@@ -22,6 +30,11 @@ const Navbar = () => {
     localStorage.removeItem("authToken");
     setDropdownOpen(false);
     navigate("/login");
+  };
+
+  // Close AI menu when clicking on another nav item
+  const handleNavClick = () => {
+    setAiMenuOpen(false);
   };
 
   return (
@@ -44,6 +57,7 @@ const Navbar = () => {
             <Link
               key={link.path}
               to={link.path}
+              onClick={handleNavClick}
               className={`text-xs xl:text-sm font-semibold flex items-center gap-1 transition-colors whitespace-nowrap ${
                 location.pathname === link.path || (link.path === '/' && location.pathname === '')
                   ? "text-primary"
@@ -54,6 +68,49 @@ const Navbar = () => {
               {link.label}
             </Link>
           ))}
+          
+          {/* AI Features Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setAiMenuOpen(!aiMenuOpen)}
+              className={`text-xs xl:text-sm font-semibold flex items-center gap-1 transition-colors whitespace-nowrap px-2 py-1.5 rounded-lg ${
+                aiFeatures.some(f => location.pathname === f.path)
+                  ? "text-primary bg-white/10"
+                  : "text-foreground/80 hover:text-foreground"
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              AI Features
+              <ChevronDown className={`w-3 h-3 transition-transform ${aiMenuOpen ? "rotate-180" : ""}`} />
+            </button>
+            
+            <AnimatePresence>
+              {aiMenuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute top-full left-0 mt-2 w-48 glass-effect rounded-lg border border-border/40 overflow-hidden shadow-lg bg-white/90"
+                >
+                  {aiFeatures.map((feature) => (
+                    <Link
+                      key={feature.path}
+                      to={feature.path}
+                      onClick={() => setAiMenuOpen(false)}
+                      className={`block px-4 py-2.5 text-sm font-medium transition-colors flex items-center gap-2 ${
+                        location.pathname === feature.path
+                          ? "text-primary bg-white/20"
+                          : "text-foreground hover:bg-white/10"
+                      }`}
+                    >
+                      <span>{feature.icon}</span>
+                      {feature.label}
+                    </Link>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
         {/* Mobile Menu Button */}
@@ -153,6 +210,25 @@ const Navbar = () => {
                 }`}
               >
                 {link.label}
+              </Link>
+            ))}
+            
+            {/* Mobile AI Menu */}
+            <div className="border-t border-white/20 my-2" />
+            <div className="text-xs font-semibold text-foreground/60 px-3 py-1">AI Features</div>
+            {aiFeatures.map((feature) => (
+              <Link
+                key={feature.path}
+                to={feature.path}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                  location.pathname === feature.path
+                    ? "text-primary bg-white/10"
+                    : "text-muted-foreground hover:text-foreground hover:bg-white/10"
+                }`}
+              >
+                <span>{feature.icon}</span>
+                {feature.label}
               </Link>
             ))}
           </motion.div>
