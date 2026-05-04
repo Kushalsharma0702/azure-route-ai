@@ -57,6 +57,15 @@ const Footer = () => {
             <Link to="/support" className="hover:text-primary-foreground/60">Support</Link>
           </div>
         </div>
+        <div className="mt-6 text-center">
+          <p className="text-xs text-primary-foreground/30">
+            Made with <span className="text-red-400 animate-pulse">❤️</span> by{' '}
+            <a href="https://aurocode.in" target="_blank" rel="noopener noreferrer"
+              className="text-primary-foreground/50 hover:text-primary-foreground/80 font-semibold transition-colors">
+              Aurocode
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
   );

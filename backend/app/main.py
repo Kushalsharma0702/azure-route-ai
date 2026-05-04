@@ -113,6 +113,8 @@ from app.routes.packages import router as packages_router
 from app.routes.package_inventory import router as package_inventory_router
 from app.routes.feedback import router as feedback_router
 from app.routes.weather import router as weather_router
+from app.routes.trip import router as trip_router
+from app.routes.gems_data import router as gems_data_router
 
 app.include_router(health_router)
 app.include_router(auth_router)
@@ -128,6 +130,8 @@ app.include_router(packages_router)
 app.include_router(package_inventory_router)
 app.include_router(feedback_router)
 app.include_router(weather_router)
+app.include_router(trip_router)
+app.include_router(gems_data_router)
 
 logger.info(
     "Registered %d routes",

@@ -86,12 +86,15 @@ export default function LiveRealityPage() {
     fetchDashboard()
     // Fetch hotels list for the dropdown
     api.request('/api/v1/hotels?limit=100')
-      .then((data: any) => setHotelsList(Array.isArray(data) ? data : []))
+      .then((data: any) => {
+        const list = data?.hotels || (Array.isArray(data) ? data : [])
+        setHotelsList(list.map((h: any) => ({ id: Number(h.id), name: h.name, city: h.city || '' })))
+      })
       .catch(() => {
         // Fallback: try hotel rooms
         api.request('/api/v1/hotel/rooms')
           .then((data: any) => {
-            const rooms = Array.isArray(data) ? data : []
+            const rooms = data?.rooms || (Array.isArray(data) ? data : [])
             setHotelsList(rooms.map((r: any) => ({ id: r.id, name: r.name, city: '' })))
           }).catch(() => {})
       })
@@ -269,12 +272,32 @@ export default function LiveRealityPage() {
                   <h2 className="text-xl font-extrabold mb-6 flex items-center gap-2"><Hotel className="w-5 h-5 text-primary" /> Hotel Details</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs font-bold text-muted-foreground block mb-1">Hotel Name *</label>
-                      <input required value={hotelName} onChange={e => setHotelName(e.target.value)} placeholder="e.g. Taj Lake Palace" className={inp} />
+                      <label className="text-xs font-bold text-muted-foreground block mb-1">Select Hotel *</label>
+                      {hotelsList.length > 0 ? (
+                        <select
+                          required
+                          value={hotelId}
+                          onChange={e => {
+                            const selected = hotelsList.find(h => String(h.id) === e.target.value)
+                            setHotelId(e.target.value)
+                            setHotelName(selected?.name || '')
+                          }}
+                          className={inp}
+                        >
+                          <option value="">— Choose a hotel —</option>
+                          {hotelsList.map(h => (
+                            <option key={h.id} value={String(h.id)}>
+                              {h.name}{h.city ? ` (${h.city})` : ''}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input required value={hotelName} onChange={e => setHotelName(e.target.value)} placeholder="e.g. Taj Lake Palace" className={inp} />
+                      )}
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-muted-foreground block mb-1">Hotel ID (optional)</label>
-                      <input value={hotelId} onChange={e => setHotelId(e.target.value)} placeholder="From your booking" className={inp} />
+                      <label className="text-xs font-bold text-muted-foreground block mb-1">Hotel ID</label>
+                      <input value={hotelId} readOnly placeholder="Auto-filled" className={`${inp} bg-muted/30`} />
                     </div>
                   </div>
                 </div>
