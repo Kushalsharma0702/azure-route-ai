@@ -1,1 +1,3 @@
-# package marker for backend app
+"""
+app — RouteAura AI Travel Assistant Backend.
+"""

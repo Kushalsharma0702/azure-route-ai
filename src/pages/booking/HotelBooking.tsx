@@ -1,28 +1,90 @@
-import { useState } from "react";
+/**
+ * HotelBooking — booking flow for a single room.
+ * Fetches from GET /api/v1/hotel/rooms/{id} — same table Hotel-CRM writes to.
+ */
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Trash2, CreditCard, Loader2, Users, Bed } from "lucide-react";
+import { Trash2, CreditCard, Loader2, Users, Bed, Building, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import Navbar from "@/components/Navbar";
 import PageTransition from "@/components/PageTransition";
 import StepProgress from "@/components/StepProgress";
-import { hotels } from "@/data/hotels";
+import { hotel as hotelApi, bookings as bookingsApi } from "@/services/api";
+
+interface ApiRoom {
+  id: number;
+  name: string;
+  type: string;
+  price: number;
+  available: boolean;
+  amenities: string[];
+  capacity: number;
+  beds: string;
+  size: string;
+}
 
 const HotelBooking = () => {
   const { id, step } = useParams();
   const navigate = useNavigate();
   const currentStep = Number(step) || 1;
-  const hotel = hotels.find((h) => h.id === id) || hotels[0];
 
+  const [room, setRoom] = useState<ApiRoom | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [guests, setGuests] = useState([{ name: "", email: "", phone: "" }]);
-  const [selectedRoom, setSelectedRoom] = useState(hotel.rooms[0]?.id || "");
   const [nights, setNights] = useState(2);
   const [coupon, setCoupon] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
   const [processing, setProcessing] = useState(false);
 
-  const steps = ["Guest Details", "Room Selection", "Review & Pay"];
-  const room = hotel.rooms.find((r) => r.id === selectedRoom) || hotel.rooms[0];
+  useEffect(() => {
+    if (!id) return;
+    setLoading(true);
+    hotelApi
+      .room(Number(id))
+      .then((data) => {
+        setRoom(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message || "Room not found");
+        setLoading(false);
+      });
+  }, [id]);
+
+  if (loading) {
+    return (
+      <PageTransition>
+        <div className="min-h-screen bg-background">
+          <Navbar />
+          <div className="pt-20 pb-16 container max-w-4xl space-y-4 mt-8">
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-48 rounded-2xl" />
+          </div>
+        </div>
+      </PageTransition>
+    );
+  }
+
+  if (error || !room) {
+    return (
+      <PageTransition>
+        <div className="min-h-screen bg-background">
+          <Navbar />
+          <div className="pt-20 pb-16 container max-w-4xl text-center mt-12">
+            <Building className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+            <h2 className="text-xl font-bold mb-2">Room not found</h2>
+            <p className="text-muted-foreground mb-4">{error}</p>
+            <Link to="/search/hotels"><Button>Browse Rooms</Button></Link>
+          </div>
+        </div>
+      </PageTransition>
+    );
+  }
+
+  const steps = ["Guest Details", "Room Review", "Payment"];
   const basePrice = room.price * nights;
   const taxes = Math.round(basePrice * 0.18);
   const total = basePrice + taxes;
@@ -33,7 +95,38 @@ const HotelBooking = () => {
     navigate(`/book/hotel/${id}/step/${currentStep + 1}`);
   };
   const goBack = () => { if (currentStep > 1) navigate(`/book/hotel/${id}/step/${currentStep - 1}`); };
-  const handlePay = () => { setProcessing(true); setTimeout(() => navigate("/confirmation"), 2500); };
+
+  const handlePay = async () => {
+    setProcessing(true);
+    try {
+      // Calculate check-in/out dates
+      const checkIn = new Date();
+      checkIn.setDate(checkIn.getDate() + 1);
+      const checkOut = new Date(checkIn);
+      checkOut.setDate(checkOut.getDate() + nights);
+
+      const formatDate = (d: Date) => d.toISOString().split('T')[0];
+
+      // Create booking in hotel_bookings table — visible in Hotel-CRM
+      await bookingsApi.create({
+        guest_name: guests[0].name,
+        guest_email: guests[0].email || undefined,
+        room_id: room.id,
+        room_name: room.name,
+        check_in: formatDate(checkIn),
+        check_out: formatDate(checkOut),
+        status: "Confirmed",
+        payment_status: "Paid",
+        amount: total - discount,
+      });
+
+      navigate("/confirmation");
+    } catch (err) {
+      console.error("Booking failed:", err);
+      setProcessing(false);
+      alert("Booking failed. Please try again.");
+    }
+  };
 
   return (
     <PageTransition>
@@ -69,24 +162,13 @@ const HotelBooking = () => {
 
               {currentStep === 2 && (
                 <motion.div key="s2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                  <h2 className="text-xl font-extrabold mb-6">Select Room</h2>
-                  <div className="space-y-3">
-                    {hotel.rooms.map((r) => (
-                      <button key={r.id} disabled={!r.available} onClick={() => setSelectedRoom(r.id)} className={`w-full text-left p-5 rounded-2xl border transition-all ${selectedRoom === r.id ? "border-primary bg-primary/5 shadow-card-hover" : r.available ? "border-border/50 bg-card hover:border-primary/30" : "border-border/30 bg-muted/30 opacity-50 cursor-not-allowed"}`}>
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-bold text-sm flex items-center gap-2"><Bed className="w-4 h-4 text-primary" /> {r.name}</h3>
-                            <p className="text-xs text-muted-foreground mt-1">{r.beds} • {r.size}</p>
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1"><Users className="w-3 h-3" /> Up to {r.capacity} guests</div>
-                            <div className="flex flex-wrap gap-1 mt-2">{r.amenities.map((a) => <span key={a} className="text-xs px-2 py-0.5 rounded bg-primary/5 text-primary">{a}</span>)}</div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-lg font-extrabold text-primary">₹{r.price.toLocaleString()}</div>
-                            <div className="text-xs text-muted-foreground">/night</div>
-                          </div>
-                        </div>
-                      </button>
-                    ))}
+                  <h2 className="text-xl font-extrabold mb-6">Room Details</h2>
+                  <div className="bg-card rounded-2xl shadow-card border border-border/50 p-6">
+                    <h3 className="font-bold text-sm flex items-center gap-2 mb-3"><Bed className="w-4 h-4 text-primary" /> {room.name}</h3>
+                    <p className="text-xs text-muted-foreground">{room.beds} • {room.size}</p>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1"><Users className="w-3 h-3" /> Up to {room.capacity} guests</div>
+                    <div className="flex flex-wrap gap-1 mt-3">{(room.amenities || []).map((a) => <span key={a} className="text-xs px-2 py-0.5 rounded bg-primary/5 text-primary">{a}</span>)}</div>
+                    <div className="mt-4 text-lg font-extrabold text-primary">₹{room.price.toLocaleString()} <span className="text-xs text-muted-foreground font-normal">/ night</span></div>
                   </div>
                   <div className="mt-4">
                     <label className="text-xs font-medium text-muted-foreground mb-1 block">Number of Nights</label>
@@ -102,8 +184,8 @@ const HotelBooking = () => {
                   <h2 className="text-xl font-extrabold mb-6">Review & Payment</h2>
                   <div className="space-y-4">
                     <div className="bg-card rounded-2xl shadow-card border border-border/50 p-6">
-                      <h3 className="font-bold text-sm mb-2">{hotel.name}</h3>
-                      <p className="text-sm text-muted-foreground">{room.name} • {nights} night{nights > 1 ? "s" : ""}</p>
+                      <h3 className="font-bold text-sm mb-2">{room.name}</h3>
+                      <p className="text-sm text-muted-foreground">{room.type} • {nights} night{nights > 1 ? "s" : ""}</p>
                       <p className="text-sm text-muted-foreground">{guests.length} guest{guests.length > 1 ? "s" : ""}: {guests.map((g) => g.name).join(", ")}</p>
                     </div>
 
@@ -142,9 +224,9 @@ const HotelBooking = () => {
             <div className="flex justify-between mt-8">
               <Button variant="outline" onClick={goBack} disabled={currentStep === 1} className="rounded-xl">Back</Button>
               {currentStep < 3 ? (
-                <Button onClick={goNext} className="bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl shadow-lg hover:opacity-90">Continue</Button>
+                <Button onClick={goNext} className="bg-primary text-primary-foreground border-0 rounded-xl shadow-lg hover:opacity-90">Continue</Button>
               ) : (
-                <Button onClick={handlePay} disabled={processing} className="bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl shadow-lg hover:opacity-90 min-w-[160px]">
+                <Button onClick={handlePay} disabled={processing} className="bg-primary text-primary-foreground border-0 rounded-xl shadow-lg hover:opacity-90 min-w-[160px]">
                   {processing ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Processing...</> : `Pay ₹${(total - discount).toLocaleString()}`}
                 </Button>
               )}

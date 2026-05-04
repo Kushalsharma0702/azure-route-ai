@@ -7,17 +7,34 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
-import { packages } from "@/data/packages";
+import api from "@/services/api";
+
+interface PackageItem {
+  id: string; title: string; destination: string; image: string;
+  duration: string; price: number; originalPrice: number | null;
+  rating: number; inclusions: string[]; badges: string[];
+  category: string; description: string;
+}
 
 const PackageResults = () => {
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState("price");
   const [filterOpen, setFilterOpen] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+  const [packages, setPackages] = useState<PackageItem[]>([]);
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 1200);
-    return () => clearTimeout(t);
+    const fetchPackages = async () => {
+      try {
+        const res = await api.request('/api/v1/package-inventory');
+        setPackages(res);
+      } catch (e) {
+        console.error("Failed to fetch packages:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPackages();
   }, []);
 
   const filtered = packages
@@ -91,7 +108,7 @@ const PackageResults = () => {
                         <div className="h-48 relative">
                           <img src={pkg.image} alt={pkg.title} loading="lazy" className="w-full h-full object-cover" />
                           <div className="absolute top-3 left-3 flex gap-2">
-                            {pkg.badges.map((b) => (
+                            {(pkg.badges || []).map((b) => (
                               <span key={b} className="text-xs px-2 py-1 rounded-full bg-primary text-primary-foreground font-medium">{b}</span>
                             ))}
                           </div>
@@ -105,7 +122,7 @@ const PackageResults = () => {
                             <MapPin className="w-3 h-3" /> {pkg.destination}
                           </p>
                           <div className="flex flex-wrap gap-1 mb-3">
-                            {pkg.inclusions.slice(0, 3).map((inc) => (
+                            {(pkg.inclusions || []).slice(0, 3).map((inc) => (
                               <span key={inc} className="text-xs px-2 py-0.5 rounded-md bg-muted text-muted-foreground">{inc}</span>
                             ))}
                           </div>

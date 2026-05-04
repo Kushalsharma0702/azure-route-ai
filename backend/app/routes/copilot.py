@@ -1,21 +1,30 @@
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
-from app.services.copilot_service import generate_copilot
-from app.db.database import get_db
+"""
+app.routes.copilot — AI copilot endpoints.
+"""
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
-router = APIRouter()
+from app.core.dependencies import get_db, get_current_user
+from app.core.security import TokenPayload
+from app.schemas.copilot import CopilotRequest, CopilotResponse, ItineraryRequest, ItineraryResponse
+from app.services.copilot_service import CopilotService
 
-class CopilotRequest(BaseModel):
-    user_id: int = None
-    preferences: dict = {}
-    time: str = None
-    weather: dict = None
-    location: dict = None
+router = APIRouter(prefix="/api/v1/copilot", tags=["copilot"])
 
-@router.post("/", tags=["copilot"])
-async def copilot(req: CopilotRequest):
-    try:
-        suggestion = await generate_copilot(req.dict())
-        return suggestion
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/suggest", response_model=CopilotResponse)
+async def suggest(
+    req: CopilotRequest,
+    current_user: TokenPayload = Depends(get_current_user),
+):
+    return await CopilotService.get_suggestion(req.model_dump())
+
+
+@router.post("/itinerary", response_model=ItineraryResponse)
+async def itinerary(
+    req: ItineraryRequest,
+    current_user: TokenPayload = Depends(get_current_user),
+):
+    return await CopilotService.generate_itinerary(
+        req.destination, req.days, req.preferences, req.budget,
+    )

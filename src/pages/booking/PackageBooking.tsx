@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import PageTransition from "@/components/PageTransition";
 import StepProgress from "@/components/StepProgress";
 import { packages } from "@/data/packages";
+import { packages as packagesApi } from "@/services/api";
 
 const PackageBooking = () => {
   const { id, step } = useParams();
@@ -32,7 +33,39 @@ const PackageBooking = () => {
     navigate(`/book/package/${id}/step/${currentStep + 1}`);
   };
   const goBack = () => { if (currentStep > 1) navigate(`/book/package/${id}/step/${currentStep - 1}`); };
-  const handlePay = () => { setProcessing(true); setTimeout(() => navigate("/confirmation"), 2500); };
+  const handlePay = async () => {
+    setProcessing(true);
+    try {
+      const travelDate = new Date();
+      travelDate.setDate(travelDate.getDate() + 14);
+
+      await packagesApi.book({
+        package_title: pkg.title,
+        package_destination: pkg.destination,
+        package_duration: pkg.duration,
+        package_category: pkg.category,
+        guest_name: travelers[0].name,
+        guest_email: travelers[0].email || undefined,
+        guest_phone: travelers[0].phone || undefined,
+        travelers_count: travelers.length,
+        travelers: travelers.map(t => ({ name: t.name, email: t.email, phone: t.phone, dob: t.dob })),
+        itinerary: pkg.itinerary,
+        inclusions: pkg.inclusions,
+        exclusions: pkg.exclusions,
+        add_ons: pkg.addOns.filter(a => selectedAddOns.includes(a.id)).map(a => ({ name: a.name, price: a.price })),
+        travel_date: travelDate.toISOString().split('T')[0],
+        status: "Confirmed",
+        payment_status: "Paid",
+        amount: total - discount,
+      });
+
+      navigate("/confirmation");
+    } catch (err) {
+      console.error("Package booking failed:", err);
+      setProcessing(false);
+      alert("Booking failed. Please try again.");
+    }
+  };
 
   return (
     <PageTransition>

@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plane, User, ChevronDown, LogOut, Menu, X, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { auth } from "@/services/api";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -131,10 +132,18 @@ const Navbar = () => {
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className="flex items-center gap-1 md:gap-1.5 px-2 md:px-3 py-1.5 rounded-full border border-border/40 bg-white/70 hover:bg-white transition cursor-pointer flex-shrink-0 text-foreground shadow-sm"
           >
-            <div className="w-4 md:w-5 h-4 md:h-5 rounded-full border border-primary text-primary flex items-center justify-center bg-transparent">
-              <User className="w-2.5 md:w-3 h-2.5 md:h-3" />
+            <div className="w-4 md:w-5 h-4 md:h-5 rounded-full border border-primary text-primary flex items-center justify-center bg-transparent overflow-hidden">
+              {auth.isLoggedIn() ? (
+                <div className="bg-primary text-primary-foreground w-full h-full flex items-center justify-center text-[10px] font-bold">
+                  {auth.getUser()?.name?.charAt(0).toUpperCase() || <User className="w-2.5 h-2.5" />}
+                </div>
+              ) : (
+                <User className="w-2.5 md:w-3 h-2.5 md:h-3" />
+              )}
             </div>
-            <span className="text-xs md:text-sm font-medium hidden sm:inline text-foreground">Hi, John</span>
+            <span className="text-xs md:text-sm font-medium hidden sm:inline text-foreground">
+              {auth.isLoggedIn() ? `Hi, ${auth.getUser()?.name?.split(' ')[0] || 'Traveler'}` : 'Sign In'}
+            </span>
             <ChevronDown className={`w-3 md:w-3.5 h-3 md:h-3.5 text-foreground/70 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
           </button>
 
@@ -148,41 +157,47 @@ const Navbar = () => {
                 transition={{ duration: 0.15 }}
                 className="absolute top-full right-0 mt-2 w-52 glass-effect rounded-2xl border border-border/40 overflow-hidden shadow-xl bg-white/90"
               >
-                <button
-                  onClick={() => { setDropdownOpen(false); navigate("/login"); }}
-                  className="w-full px-4 py-2 text-sm text-foreground hover:bg-white/10 flex items-center gap-2 transition"
-                >
-                  Sign in
-                </button>
-                <button
-                  onClick={() => { setDropdownOpen(false); navigate("/signup"); }}
-                  className="w-full px-4 py-2 text-sm text-foreground hover:bg-white/10 flex items-center gap-2 transition"
-                >
-                  Sign up
-                </button>
-                <div className="border-t border-border/40" />
-                <button
-                  onClick={() => setDropdownOpen(false)}
-                  className="w-full px-4 py-2 text-sm text-foreground hover:bg-white/10 flex items-center gap-2 transition"
-                >
-                  <User className="w-4 h-4" />
-                  Profile
-                </button>
-                <button
-                  onClick={() => setDropdownOpen(false)}
-                  className="w-full px-4 py-2 text-sm text-foreground hover:bg-white/10 flex items-center gap-2 transition"
-                >
-                  <span>⚙️</span>
-                  Settings
-                </button>
-                <div className="border-t border-border/40" />
-                <button
-                  onClick={handleLogout}
-                  className="w-full px-4 py-2 text-sm text-destructive hover:bg-destructive/10 flex items-center gap-2 transition font-medium"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Logout
-                </button>
+                {!auth.isLoggedIn() ? (
+                  <>
+                    <button
+                      onClick={() => { setDropdownOpen(false); navigate("/login"); }}
+                      className="w-full px-4 py-2 text-sm text-foreground hover:bg-white/10 flex items-center gap-2 transition"
+                    >
+                      Sign in
+                    </button>
+                    <button
+                      onClick={() => { setDropdownOpen(false); navigate("/signup"); }}
+                      className="w-full px-4 py-2 text-sm text-foreground hover:bg-white/10 flex items-center gap-2 transition"
+                    >
+                      Sign up
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => { setDropdownOpen(false); navigate("/profile"); }}
+                      className="w-full px-4 py-2 text-sm text-foreground hover:bg-white/10 flex items-center gap-2 transition"
+                    >
+                      <User className="w-4 h-4" />
+                      Traveler DNA Profile
+                    </button>
+                    <button
+                      onClick={() => { setDropdownOpen(false); navigate("/profile"); }}
+                      className="w-full px-4 py-2 text-sm text-foreground hover:bg-white/10 flex items-center gap-2 transition"
+                    >
+                      <span>⚙️</span>
+                      Settings
+                    </button>
+                    <div className="border-t border-border/40" />
+                    <button
+                      onClick={handleLogout}
+                      className="w-full px-4 py-2 text-sm text-destructive hover:bg-destructive/10 flex items-center gap-2 transition font-medium"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Logout
+                    </button>
+                  </>
+                )}
               </motion.div>
             )}
           </AnimatePresence>

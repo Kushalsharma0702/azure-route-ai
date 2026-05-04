@@ -1,1 +1,1 @@
-# services package
+"""app.services — Business logic layer package."""

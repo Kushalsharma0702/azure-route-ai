@@ -1,1 +1,3 @@
-# schemas package
+"""
+app.schemas — Pydantic request/response schemas package.
+"""

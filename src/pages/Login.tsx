@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Plane, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { auth } from "@/services/api";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const Login = () => {
@@ -13,25 +14,29 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       toast.error("Please enter email and password");
       return;
     }
     setLoading(true);
-    setTimeout(() => {
-      localStorage.setItem("routeaura_user", JSON.stringify({ email, name: email.split("@")[0] }));
-      toast.success("Welcome back! ");
+    try {
+      const result = await auth.login(email, password);
+      toast.success(`Welcome back, ${result.user?.name || 'traveler'}! 🎉`);
       navigate("/");
-    }, 1000);
+    } catch (err: any) {
+      toast.error(err.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex">
       <div className="hidden lg:block lg:w-1/2 relative">
         <img src={heroBg} alt="" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-muted/30  " />
+        <div className="absolute inset-0 bg-muted/30" />
         <div className="absolute inset-0 flex items-center justify-center p-12">
           <div className="text-primary-foreground max-w-md">
             <h2 className="text-4xl font-extrabold mb-4">Explore India with AI</h2>
@@ -78,7 +83,7 @@ const Login = () => {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter any password"
+                  placeholder="Enter your password"
                   className="w-full pl-10 pr-10 py-3 rounded-xl bg-muted/50 border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition"
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -90,7 +95,7 @@ const Login = () => {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity"
+              className="w-full h-12 bg-primary text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity"
             >
               {loading ? (
                 <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full" />

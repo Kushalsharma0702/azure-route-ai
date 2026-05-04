@@ -1,219 +1,337 @@
+/**
+ * HotelDetail — shows a single room from GET /api/v1/hotel/rooms/{id}
+ * 
+ * Uses the SAME hotel_rooms table that Hotel-CRM writes to.
+ * When admin adds/updates a room in Hotel-CRM, it instantly reflects here.
+ */
 import { useParams, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ChevronRight, Star, MapPin, Wifi, Car, UtensilsCrossed, Dumbbell, Waves, Wine, Shield, ChevronLeft } from "lucide-react";
+import {
+  ChevronRight, Star, MapPin, Wifi, Car, UtensilsCrossed, Dumbbell,
+  Waves, Wine, Shield, Building, Loader2, Bed, Users,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
-import { hotels } from "@/data/hotels";
-import { useState } from "react";
+import { hotel as hotelApi, feedback } from "@/services/api";
 
 const amenityIcons: Record<string, any> = {
-  "Free WiFi": Wifi, Pool: Waves, Spa: Waves, Gym: Dumbbell, Bar: Wine, Restaurant: UtensilsCrossed,
-  Breakfast: UtensilsCrossed, "Airport Transfer": Car, "Sea View": MapPin, "Mountain View": MapPin,
-  "Lake View": MapPin, "Ski Access": MapPin, Fireplace: Shield, "Fine Dining": UtensilsCrossed,
-  Heritage: Shield, Overwater: Waves, "Private Pool": Waves, "All Inclusive": Star, Snorkeling: Waves, Sauna: Waves,
+  "Free WiFi": Wifi, WiFi: Wifi, Pool: Waves, Spa: Waves, Gym: Dumbbell, Bar: Wine,
+  Restaurant: UtensilsCrossed, Breakfast: UtensilsCrossed, "Airport Transfer": Car,
+  "Sea View": MapPin, "Mountain View": MapPin, "Lake View": MapPin,
+  Fireplace: Shield, AC: Shield,
 };
+
+interface ApiRoom {
+  id: number;
+  name: string;
+  type: string;
+  price: number;
+  available: boolean;
+  amenities: string[];
+  image_url: string | null;
+  description: string | null;
+  capacity: number;
+  beds: string;
+  size: string;
+  hotel_id: number | null;
+}
+
+interface RealityScore {
+  hotel_id: number;
+  total_reviews: number;
+  avg_overall: number | null;
+  avg_cleanliness: number | null;
+  avg_service: number | null;
+  avg_amenities: number | null;
+  recommend_pct: number | null;
+}
+
+interface WeatherAlert {
+  type: string; icon: string; title: string; message: string;
+}
 
 const HotelDetail = () => {
   const { id } = useParams();
-  const hotel = hotels.find((h) => h.id === id) || hotels[0];
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const totalImages = hotel.images.length;
+  const [room, setRoom] = useState<ApiRoom | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [nights, setNights] = useState(1);
+  const [realityScore, setRealityScore] = useState<RealityScore | null>(null);
+  const [weatherAlerts, setWeatherAlerts] = useState<WeatherAlert[]>([]);
 
-  const goToPrevImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? totalImages - 1 : prev - 1));
-  };
+  useEffect(() => {
+    if (!id) return;
+    setLoading(true);
+    setError(null);
+    hotelApi
+      .room(Number(id))
+      .then((data) => {
+        setRoom(data);
+        setLoading(false);
+        // Fetch reality score
+        feedback.score(data.hotel_id || Number(id)).then(setRealityScore).catch(() => {});
+        // Fetch weather alerts for destination
+        if (data.name) {
+          const dest = data.name.split(/[-–,]/)[0].trim();
+          fetch(`http://localhost:8000/api/v1/weather/alerts?destination=${encodeURIComponent(dest)}`)
+            .then(r => r.json()).then(d => setWeatherAlerts(d.alerts || [])).catch(() => {});
+        }
+      })
+      .catch((err) => {
+        setError(err.message || "Room not found");
+        setLoading(false);
+      });
+  }, [id]);
 
-  const goToNextImage = () => {
-    setCurrentImageIndex((prev) => (prev === totalImages - 1 ? 0 : prev + 1));
-  };
+  if (loading) {
+    return (
+      <PageTransition>
+        <div className="min-h-screen bg-background">
+          <Navbar />
+          <div className="pt-20 pb-16">
+            <div className="container max-w-5xl space-y-6 mt-8">
+              <Skeleton className="h-72 rounded-2xl" />
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="md:col-span-2 space-y-4">
+                  <Skeleton className="h-8 w-64" />
+                  <Skeleton className="h-4 w-96" />
+                  <Skeleton className="h-32 rounded-xl" />
+                </div>
+                <Skeleton className="h-64 rounded-2xl" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </PageTransition>
+    );
+  }
+
+  if (error || !room) {
+    return (
+      <PageTransition>
+        <div className="min-h-screen bg-background">
+          <Navbar />
+          <div className="pt-20 pb-16">
+            <div className="container max-w-5xl text-center mt-16">
+              <Building className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+              <h2 className="text-xl font-bold mb-2">Room Not Found</h2>
+              <p className="text-muted-foreground mb-4">{error || "This room doesn't exist."}</p>
+              <Link to="/search/hotels">
+                <Button className="rounded-xl">Browse Rooms</Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </PageTransition>
+    );
+  }
+
+  const taxes = Math.round(room.price * nights * 0.18);
+  const total = room.price * nights + taxes;
 
   return (
     <PageTransition>
       <div className="min-h-screen bg-background">
         <Navbar />
         <div className="pt-20 pb-16">
-          <div className="bg-card border-b border-border">
-            <div className="container py-3 flex items-center gap-2 text-xs text-muted-foreground">
-              <Link to="/" className="hover:text-foreground">Home</Link>
+          {/* Breadcrumb */}
+          <div className="container max-w-5xl">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+              <Link to="/" className="hover:text-primary">Home</Link>
               <ChevronRight className="w-3 h-3" />
-              <Link to="/search/hotels" className="hover:text-foreground">Hotels</Link>
+              <Link to="/search/hotels" className="hover:text-primary">Rooms</Link>
               <ChevronRight className="w-3 h-3" />
-              <span className="text-foreground font-medium">{hotel.name}</span>
+              <span className="text-foreground font-medium">{room.name}</span>
             </div>
           </div>
 
-          <div className="container mt-8">
-            {/* Gallery Carousel */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-              <div className="relative h-96 rounded-2xl overflow-hidden bg-muted">
-                <img 
-                  src={hotel.images[currentImageIndex]} 
-                  alt={hotel.name} 
-                  className="w-full h-full object-cover transition-all duration-300"
-                />
-                {totalImages > 1 && (
-                  <>
-                    <button
-                      onClick={goToPrevImage}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-black p-2 rounded-full transition-all duration-200 shadow-lg z-10"
-                      aria-label="Previous image"
-                    >
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={goToNextImage}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-black p-2 rounded-full transition-all duration-200 shadow-lg z-10"
-                      aria-label="Next image"
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-                      {hotel.images.map((_, i) => (
-                        <button
-                          key={i}
-                          onClick={() => setCurrentImageIndex(i)}
-                          className={`h-2 rounded-full transition-all duration-200 ${
-                            i === currentImageIndex ? 'bg-primary w-6' : 'bg-white/50 hover:bg-white w-2'
-                          }`}
-                          aria-label={`Go to image ${i + 1}`}
-                        />
-                      ))}
-                    </div>
-                  </>
-                )}
+          {/* Hero image */}
+          <div className="container max-w-5xl mb-8">
+            <div className="h-72 md:h-96 rounded-2xl overflow-hidden bg-muted relative">
+              {room.image_url ? (
+                <img src={room.image_url} alt={room.name} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5">
+                  <Bed className="w-20 h-20 text-primary/20" />
+                </div>
+              )}
+              <div className="absolute top-4 left-4 flex gap-2">
+                <span className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm font-bold shadow-lg">
+                  {room.type}
+                </span>
+                <span className={`px-3 py-1.5 rounded-lg text-sm font-bold shadow-lg ${
+                  room.available
+                    ? "bg-success text-success-foreground"
+                    : "bg-destructive text-destructive-foreground"
+                }`}>
+                  {room.available ? "Available" : "Sold Out"}
+                </span>
               </div>
-            </motion.div>
+            </div>
+          </div>
 
-            <div className="grid lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2 space-y-6">
+          <div className="container max-w-5xl">
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Left: Room details */}
+              <div className="md:col-span-2 space-y-6">
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-                  <div className="flex items-start justify-between mb-2">
-                    <h1 className="text-2xl font-extrabold">{hotel.name}</h1>
-                    <div className="flex items-center gap-1 bg-success/10 text-success px-2 py-1 rounded-full text-sm font-medium">
-                      <Star className="w-3.5 h-3.5 fill-current" /> {hotel.rating}
-                    </div>
+                  <h1 className="text-2xl md:text-3xl font-extrabold mb-2">{room.name}</h1>
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <span className="flex items-center gap-1"><Bed className="w-4 h-4" /> {room.beds || "1 King Bed"}</span>
+                    <span>•</span>
+                    <span>{room.size || "30 sqm"}</span>
+                    <span>•</span>
+                    <span className="flex items-center gap-1"><Users className="w-4 h-4" /> Up to {room.capacity || 2} guests</span>
                   </div>
-                  <p className="text-muted-foreground flex items-center gap-1 text-sm mb-4">
-                    <MapPin className="w-4 h-4" /> {hotel.location} • {hotel.reviews.toLocaleString()} reviews
-                  </p>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{hotel.description}</p>
                 </motion.div>
+
+                {room.description && (
+                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+                    <div className="bg-card rounded-2xl shadow-card border border-border/50 p-6">
+                      <h2 className="font-bold text-lg mb-3">About This Room</h2>
+                      <p className="text-muted-foreground leading-relaxed">{room.description}</p>
+                    </div>
+                  </motion.div>
+                )}
 
                 {/* Amenities */}
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-card rounded-2xl shadow-card border border-border/50 p-6">
-                  <h2 className="font-bold text-lg mb-4">Amenities</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {hotel.amenities.map((a) => {
-                      const Icon = amenityIcons[a] || Star;
-                      return (
-                        <div key={a} className="flex items-center gap-2 p-3 rounded-xl bg-muted/50 text-sm">
-                          <Icon className="w-4 h-4 text-primary" />
-                          <span>{a}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </motion.div>
-
-                {/* Rooms */}
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-card rounded-2xl shadow-card border border-border/50 p-6">
-                  <h2 className="font-bold text-lg mb-4">Available Rooms</h2>
-                  <div className="space-y-3">
-                    {hotel.rooms.map((room) => (
-                      <div key={room.id} className={`p-4 rounded-xl border ${room.available ? "border-border/50 bg-muted/30" : "border-destructive/20 bg-destructive/5 opacity-60"}`}>
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-semibold text-sm">{room.name}</h3>
-                            <p className="text-xs text-muted-foreground">{room.beds} • {room.size} • Up to {room.capacity} guests</p>
-                            <div className="flex flex-wrap gap-1 mt-2">
-                              {room.amenities.map((a) => (
-                                <span key={a} className="text-xs px-2 py-0.5 rounded bg-primary/5 text-primary">{a}</span>
-                              ))}
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+                  <div className="bg-card rounded-2xl shadow-card border border-border/50 p-6">
+                    <h2 className="font-bold text-lg mb-4">Room Amenities</h2>
+                    {(room.amenities || []).length > 0 ? (
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        {room.amenities.map((a) => {
+                          const Icon = amenityIcons[a] || Shield;
+                          return (
+                            <div key={a} className="flex items-center gap-2 p-2.5 rounded-xl bg-muted/50">
+                              <Icon className="w-4 h-4 text-primary" />
+                              <span className="text-sm">{a}</span>
                             </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="font-extrabold text-primary">₹{room.price.toLocaleString()}</div>
-                            <div className="text-xs text-muted-foreground">/night</div>
-                            {!room.available && <span className="text-xs text-destructive font-medium">Sold Out</span>}
-                          </div>
-                        </div>
+                          );
+                        })}
                       </div>
-                    ))}
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No amenities listed.</p>
+                    )}
                   </div>
                 </motion.div>
 
                 {/* Policies */}
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="bg-card rounded-2xl shadow-card border border-border/50 p-6">
-                  <h2 className="font-bold text-lg mb-4">Hotel Policies</h2>
-                  <div className="space-y-3 text-sm">
-                    <div className="flex justify-between p-3 bg-muted/50 rounded-xl">
-                      <span className="text-muted-foreground">Check-in</span>
-                      <span className="font-medium">{hotel.policies.checkIn}</span>
-                    </div>
-                    <div className="flex justify-between p-3 bg-muted/50 rounded-xl">
-                      <span className="text-muted-foreground">Check-out</span>
-                      <span className="font-medium">{hotel.policies.checkOut}</span>
-                    </div>
-                    <div className="flex justify-between p-3 bg-muted/50 rounded-xl">
-                      <span className="text-muted-foreground">Cancellation</span>
-                      <span className="font-medium">{hotel.policies.cancellation}</span>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Reviews */}
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-card rounded-2xl shadow-card border border-border/50 p-6">
-                  <h2 className="font-bold text-lg mb-4">Guest Reviews</h2>
-                  <div className="space-y-4">
-                    {hotel.guestReviews.map((review, i) => (
-                      <div key={i} className="flex gap-3 p-3 rounded-xl bg-muted/30">
-                        <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-primary-foreground text-xs font-bold flex-shrink-0">{review.avatar}</div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-sm">{review.name}</span>
-                            <span className="text-xs text-muted-foreground">{review.stayType}</span>
-                          </div>
-                          <div className="flex items-center gap-0.5 my-1">{Array.from({ length: review.rating }).map((_, j) => <Star key={j} className="w-3 h-3 fill-warning text-warning" />)}</div>
-                          <p className="text-sm text-muted-foreground">{review.text}</p>
-                        </div>
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+                  <div className="bg-card rounded-2xl shadow-card border border-border/50 p-6">
+                    <h2 className="font-bold text-lg mb-3">Policies</h2>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex justify-between py-2 border-b border-border/50">
+                        <span className="text-muted-foreground">Check-in</span>
+                        <span className="font-medium">2:00 PM</span>
                       </div>
-                    ))}
+                      <div className="flex justify-between py-2 border-b border-border/50">
+                        <span className="text-muted-foreground">Check-out</span>
+                        <span className="font-medium">12:00 PM</span>
+                      </div>
+                      <div className="flex justify-between py-2">
+                        <span className="text-muted-foreground">Cancellation</span>
+                        <span className="font-medium">Free cancellation up to 24 hours before check-in</span>
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               </div>
 
-              {/* Sticky sidebar */}
-              <div>
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="bg-card rounded-2xl shadow-card border border-border/50 p-6 sticky top-24">
-                  <div className="text-center mb-4">
-                    <div className="text-3xl font-extrabold text-primary">₹{hotel.price.toLocaleString()}</div>
+              {/* Right: Booking sidebar */}
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
+                <div className="bg-card rounded-2xl shadow-card border border-border/50 p-6 sticky top-24 space-y-4">
+                  <div className="text-center">
+                    <div className="text-3xl font-extrabold text-primary">₹{room.price.toLocaleString()}</div>
                     <div className="text-sm text-muted-foreground">per night</div>
-                    {hotel.originalPrice && (
-                      <div className="text-sm text-muted-foreground line-through">₹{hotel.originalPrice.toLocaleString()}</div>
-                    )}
                   </div>
-                  <div className="space-y-2 text-sm mb-4">
-                    <div className="flex justify-between"><span className="text-muted-foreground">1 night × ₹{hotel.price.toLocaleString()}</span><span>₹{hotel.price.toLocaleString()}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">Taxes & Fees</span><span>₹{Math.round(hotel.price * 0.18).toLocaleString()}</span></div>
+
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground mb-1 block">Nights</label>
+                    <select
+                      value={nights}
+                      onChange={(e) => setNights(Number(e.target.value))}
+                      className="w-full px-3 py-2.5 rounded-xl bg-muted/50 border border-border text-sm"
+                    >
+                      {[1, 2, 3, 4, 5, 7, 10, 14].map((n) => (
+                        <option key={n} value={n}>{n} night{n > 1 ? "s" : ""}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">{nights} night{nights > 1 ? "s" : ""} × ₹{room.price.toLocaleString()}</span>
+                      <span>₹{(room.price * nights).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Taxes & Fees</span>
+                      <span>₹{taxes.toLocaleString()}</span>
+                    </div>
                     <div className="border-t border-border pt-2 flex justify-between font-bold">
                       <span>Total</span>
-                      <span className="text-primary">₹{Math.round(hotel.price * 1.18).toLocaleString()}</span>
+                      <span className="text-primary">₹{total.toLocaleString()}</span>
                     </div>
                   </div>
-                  <Link to={`/book/hotel/${hotel.id}/step/1`}>
-                    <Button className="w-full h-12 bg-primary text-primary-foreground text-primary-foreground border-0 rounded-xl font-semibold shadow-lg hover:opacity-90 transition-opacity">
-                      Book Now
+
+                  <Link to={`/book/hotel/${room.id}/step/1`}>
+                    <Button
+                      disabled={!room.available}
+                      className="w-full bg-primary text-primary-foreground rounded-xl h-12 text-base font-bold border-0 hover:opacity-90 shadow-lg mt-2"
+                    >
+                      {room.available ? "Book Now" : "Sold Out"}
                     </Button>
                   </Link>
-                  <div className="flex gap-2 mt-3 flex-wrap justify-center">
-                    {hotel.badges.map((b) => (
-                      <span key={b} className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">{b}</span>
-                    ))}
-                  </div>
-                </motion.div>
-              </div>
+
+                  {/* Live Reality Score */}
+                  {realityScore && realityScore.total_reviews > 0 && (
+                    <div className="mt-4 p-4 rounded-xl bg-gradient-to-br from-blue-50 to-purple-50 border border-blue-100">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white font-extrabold text-lg shadow-md ${
+                          (realityScore.avg_overall || 0) >= 8 ? 'bg-emerald-500' :
+                          (realityScore.avg_overall || 0) >= 6 ? 'bg-amber-500' :
+                          (realityScore.avg_overall || 0) >= 4 ? 'bg-orange-500' : 'bg-red-500'
+                        }`}>
+                          {realityScore.avg_overall}
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold">Reality Score</div>
+                          <div className="text-xs text-muted-foreground">{realityScore.total_reviews} verified reviews</div>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-xs mt-2">
+                        {realityScore.avg_cleanliness && <div className="text-center p-1.5 rounded-lg bg-white/70"><div className="font-bold">{realityScore.avg_cleanliness}</div><div className="text-muted-foreground">Clean</div></div>}
+                        {realityScore.avg_service && <div className="text-center p-1.5 rounded-lg bg-white/70"><div className="font-bold">{realityScore.avg_service}</div><div className="text-muted-foreground">Service</div></div>}
+                        {realityScore.avg_amenities && <div className="text-center p-1.5 rounded-lg bg-white/70"><div className="font-bold">{realityScore.avg_amenities}</div><div className="text-muted-foreground">Amenities</div></div>}
+                      </div>
+                      {realityScore.recommend_pct !== null && (
+                        <div className="text-xs text-center mt-2 text-muted-foreground">👍 {realityScore.recommend_pct}% recommend</div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Weather Alerts */}
+                  {weatherAlerts.length > 0 && (
+                    <div className="mt-4 space-y-2">
+                      <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">🌤️ Travel Alerts</h4>
+                      {weatherAlerts.slice(0, 3).map((alert, i) => (
+                        <div key={i} className={`p-3 rounded-xl text-xs border ${
+                          alert.type === 'warning' ? 'bg-amber-50 border-amber-200 text-amber-800' :
+                          alert.type === 'info' ? 'bg-blue-50 border-blue-200 text-blue-800' :
+                          'bg-emerald-50 border-emerald-200 text-emerald-800'
+                        }`}>
+                          <span className="font-bold">{alert.icon} {alert.title}</span>
+                          <p className="mt-0.5 opacity-80">{alert.message}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
             </div>
           </div>
         </div>

@@ -37,6 +37,9 @@ import LiveStatusPage from "./pages/LiveStatusPage";
 import VoiceAssistant from "./pages/VoiceAssistant";
 import HiddenGems from "./pages/HiddenGems";
 
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import Profile from "./pages/Profile";
+
 const queryClient = new QueryClient();
 
 const AnimatedRoutes = () => {
@@ -46,34 +49,42 @@ const AnimatedRoutes = () => {
       <AnimatePresence mode="wait">
         <Suspense key={location.pathname} fallback={<RouteAuraLoader />}>
           <Routes location={location} key={location.pathname}>
+            {/* Public Routes */}
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/search" element={<SearchResults />} />
-            <Route path="/search/flights" element={<FlightResults />} />
-            <Route path="/search/hotels" element={<HotelResults />} />
-            <Route path="/search/trains" element={<TrainResults />} />
-            <Route path="/search/packages" element={<PackageResults />} />
-            <Route path="/flights/:id" element={<FlightDetail />} />
-            <Route path="/hotels/:id" element={<HotelDetail />} />
-            <Route path="/trains/:id" element={<TrainDetail />} />
-            <Route path="/packages/:id" element={<PackageDetail />} />
-            <Route path="/detail/:id" element={<Detail />} />
-            <Route path="/book/flight/:id/step/:step" element={<FlightBooking />} />
-            <Route path="/book/hotel/:id/step/:step" element={<HotelBooking />} />
-            <Route path="/book/train/:id/step/:step" element={<TrainBooking />} />
-            <Route path="/book/package/:id/step/:step" element={<PackageBooking />} />
-            <Route path="/booking" element={<Booking />} />
-            <Route path="/confirmation" element={<Confirmation />} />
-            <Route path="/trip-planner" element={<TripPlanner />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/copilot" element={<CopilotPage />} />
-            <Route path="/live-status" element={<LiveStatusPage />} />
-            <Route path="/voice-assistant" element={<VoiceAssistant />} />
-            <Route path="/hidden-gems" element={<HiddenGems />} />
-            <Route path="/support" element={<Support />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/support" element={<Support />} />
+
+            {/* Protected Routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/search" element={<SearchResults />} />
+              <Route path="/search/flights" element={<FlightResults />} />
+              <Route path="/search/hotels" element={<HotelResults />} />
+              <Route path="/search/trains" element={<TrainResults />} />
+              <Route path="/search/packages" element={<PackageResults />} />
+              <Route path="/flights/:id" element={<FlightDetail />} />
+              <Route path="/hotels/:id" element={<HotelDetail />} />
+              <Route path="/trains/:id" element={<TrainDetail />} />
+              <Route path="/packages/:id" element={<PackageDetail />} />
+              <Route path="/detail/:id" element={<Detail />} />
+              <Route path="/book/flight/:id/step/:step" element={<FlightBooking />} />
+              <Route path="/book/hotel/:id/step/:step" element={<HotelBooking />} />
+              <Route path="/book/train/:id/step/:step" element={<TrainBooking />} />
+              <Route path="/book/package/:id/step/:step" element={<PackageBooking />} />
+              <Route path="/booking" element={<Booking />} />
+              <Route path="/confirmation" element={<Confirmation />} />
+              <Route path="/trip-planner" element={<TripPlanner />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/copilot" element={<CopilotPage />} />
+              <Route path="/live-status" element={<LiveStatusPage />} />
+              <Route path="/live-reality" element={<LiveStatusPage />} />
+              <Route path="/voice-assistant" element={<VoiceAssistant />} />
+              <Route path="/hidden-gems" element={<HiddenGems />} />
+            </Route>
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
