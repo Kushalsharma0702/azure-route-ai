@@ -5,21 +5,16 @@
  * Token is stored in localStorage and sent in Authorization header.
  */
 
-const TUNNEL_URL = 'https://allowance-reduction-onto-tried.trycloudflare.com';
+// Ngrok tunnel URL — exposes local backend to all devices & Vercel
+const BACKEND_URL = 'https://1ac1-2409-40d0-11fa-46bf-7b7-8227-c1de-4b.ngrok-free.app';
 
 const getApiBase = () => {
-  // 1. Explicit env var always wins
-  if (import.meta.env.VITE_AI_API_URL) return import.meta.env.VITE_AI_API_URL;
-  // 2. Local development
+  // Local dev: use localhost directly for speed
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    return 'http://localhost:8000';
+    return import.meta.env.VITE_AI_API_URL || 'http://localhost:8000';
   }
-  // 3. LAN access (e.g. 192.168.x.x)
-  if (/^(\d{1,3}\.){3}\d{1,3}$/.test(window.location.hostname)) {
-    return `http://${window.location.hostname}:8000`;
-  }
-  // 4. Production / Vercel / any other domain → use the tunnel
-  return TUNNEL_URL;
+  // Everything else (Vercel, mobile, any device) → ngrok tunnel
+  return BACKEND_URL;
 };
 
 const API_BASE = getApiBase();
