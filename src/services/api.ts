@@ -51,6 +51,7 @@ async function request(path: string, opts: RequestInit = {}): Promise<any> {
   const url = path.startsWith('http') ? path : `${API_BASE}${path}`
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    'ngrok-skip-browser-warning': 'true',
     ...((opts.headers as Record<string, string>) || {}),
   }
   const token = getToken()
