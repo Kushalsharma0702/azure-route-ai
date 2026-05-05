@@ -15,6 +15,8 @@ from app.models.hotel_room import HotelRoom
 from app.models.hotel_booking import HotelBooking
 from app.models.hotel_customer import HotelCustomer
 from app.models.hotel import Hotel
+from app.models.package import Package
+from app.models.package_booking import PackageBooking
 
 __all__ = [
     "User",
@@ -27,4 +29,6 @@ __all__ = [
     "HotelBooking",
     "HotelCustomer",
     "Hotel",
+    "Package",
+    "PackageBooking",
 ]

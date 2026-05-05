@@ -62,6 +62,17 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# ── Root Route ────────────────────────────────────────────────
+@app.get("/")
+async def root():
+    return {
+        "message": "Welcome to RouteAura AI Backend",
+        "status": "online",
+        "docs": "/docs",
+        "health": "/api/v1/health"
+    }
+
+
 # ── CORS Middleware ───────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,

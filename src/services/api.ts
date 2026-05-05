@@ -5,7 +5,24 @@
  * Token is stored in localStorage and sent in Authorization header.
  */
 
-const API_BASE = import.meta.env.VITE_AI_API_URL || 'http://localhost:8000'
+const TUNNEL_URL = 'https://allowance-reduction-onto-tried.trycloudflare.com';
+
+const getApiBase = () => {
+  // 1. Explicit env var always wins
+  if (import.meta.env.VITE_AI_API_URL) return import.meta.env.VITE_AI_API_URL;
+  // 2. Local development
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return 'http://localhost:8000';
+  }
+  // 3. LAN access (e.g. 192.168.x.x)
+  if (/^(\d{1,3}\.){3}\d{1,3}$/.test(window.location.hostname)) {
+    return `http://${window.location.hostname}:8000`;
+  }
+  // 4. Production / Vercel / any other domain → use the tunnel
+  return TUNNEL_URL;
+};
+
+const API_BASE = getApiBase();
 
 // ── Token Management ──────────────────────────────────────
 

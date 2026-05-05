@@ -88,11 +88,11 @@ const Signup = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center p-8">
+      <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-8 overflow-y-auto bg-background">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md"
+          className="w-full max-w-md py-8 sm:py-12"
         >
           <Link to="/" className="flex items-center gap-2 font-bold text-xl mb-8">
             <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center">
@@ -168,6 +168,8 @@ const Signup = () => {
                   <label className="text-sm font-medium mb-1.5 block">Enter OTP</label>
                   <input
                     type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     placeholder="000000"

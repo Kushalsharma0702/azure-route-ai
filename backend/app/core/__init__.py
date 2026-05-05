@@ -23,6 +23,8 @@ class Settings(BaseSettings):
 
     @property
     def allowed_origins_list(self) -> List[str]:
+        if self.APP_ENV == "development":
+            return ["*"]
         return [o.strip() for o in self.ALLOWED_ORIGINS.split(",") if o.strip()]
 
     @property
