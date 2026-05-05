@@ -24,7 +24,7 @@ export default function GemsCard() {
   async function load() {
     setLoading(true)
     try {
-      const res = await api.post('/api/hidden-gems', { 
+      const res = await api.post('/api/v1/hidden-gems', { 
         location: { lat: 12.97, lng: 77.59 } 
       })
       setGems((res as GemsResponse).gems || [])

@@ -237,5 +237,36 @@ const feedback = {
   dashboard: () => request('/api/v1/feedback/dashboard'),
 }
 
-export default { auth, hotel, hotels, bookings, packages, feedback, ai, voice, travel, hiddenGems, request }
+// ── Convenience helpers ──────────────────────────────────────
+// Used by components that call api.post(), api.get(), api.postForm(), etc.
+
+function get(path: string): Promise<any> {
+  return request(path)
+}
+
+function post(path: string, data: any): Promise<any> {
+  return request(path, { method: 'POST', body: JSON.stringify(data) })
+}
+
+function put(path: string, data: any): Promise<any> {
+  return request(path, { method: 'PUT', body: JSON.stringify(data) })
+}
+
+function del(path: string): Promise<any> {
+  return request(path, { method: 'DELETE' })
+}
+
+async function postForm(path: string, formData: FormData): Promise<any> {
+  const url = path.startsWith('http') ? path : `${API_BASE}${path}`
+  const headers: Record<string, string> = {
+    'ngrok-skip-browser-warning': 'true',
+  }
+  const token = getToken()
+  if (token) headers['Authorization'] = `Bearer ${token}`
+  const res = await fetch(url, { method: 'POST', body: formData, headers })
+  if (!res.ok) throw new Error(await res.text())
+  return res.json()
+}
+
+export default { auth, hotel, hotels, bookings, packages, feedback, ai, voice, travel, hiddenGems, request, get, post, put, delete: del, postForm }
 export { auth, hotel, hotels, bookings, packages, feedback, ai, voice, travel, hiddenGems, getToken, getUser, clearTokens }

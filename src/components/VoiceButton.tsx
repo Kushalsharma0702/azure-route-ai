@@ -19,7 +19,7 @@ export default function VoiceButton() {
     
     setLoading(true)
     try {
-      const res = await api.post('/api/voice', { text })
+      const res = await api.post('/api/v1/voice', { text })
       setResp(res as VoiceResponse)
     } catch (e) {
       setResp({ error: (e as Error).message, intent: '', action: '', params: {}, response_text: '' })

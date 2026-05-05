@@ -14,7 +14,7 @@ export default function CopilotWidget() {
         time: new Date().toISOString(), 
         location: { lat: 0, lng: 0 } 
       }
-      const res = await api.post('/api/copilot', payload)
+      const res = await api.post('/api/v1/copilot', payload)
       setResult(res)
     } catch (e) {
       setResult({ error: (e as Error).message })

@@ -22,7 +22,7 @@ export default function LiveStatusCard({ placeId }: { placeId: number }) {
       setLoading(true)
       setError(null)
       try {
-        const res = await api.get(`/api/live-status/?place_id=${placeId}`)
+        const res = await api.get(`/api/v1/live-status/?place_id=${placeId}`)
         if (!mounted) return
         setData(res as LiveStatus)
       } catch (e) {

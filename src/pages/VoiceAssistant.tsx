@@ -144,7 +144,7 @@ export default function VoiceAssistant() {
       // optionally include language hint
       if (language !== 'auto') form.append('language', language)
 
-      const sttRes = await api.postForm('/api/voice/stt', form)
+      const sttRes = await api.postForm('/api/v1/voice/stt', form)
       const transcribed = (sttRes && sttRes.text) || ''
       if (!transcribed) return
       // forward transcription into chat flow
@@ -172,7 +172,7 @@ export default function VoiceAssistant() {
     try {
       // Send language to the backend so LLM responds in the selected language
       // Use updatedMessages (not stale messages from closure)
-      const chatRes = await api.post('/api/voice/chat', {
+      const chatRes = await api.post('/api/v1/voice/chat', {
         messages: updatedMessages.map((msg) => ({ role: msg.role, content: msg.content })),
         language: language,
       })
@@ -205,7 +205,7 @@ export default function VoiceAssistant() {
         }
 
         console.log('TTS request body:', ttsBody)
-        const ttsRes = await api.post('/api/voice/tts', ttsBody)
+        const ttsRes = await api.post('/api/v1/voice/tts', ttsBody)
         console.log('TTS response:', { audio_len: ttsRes.audio_base64?.length, codec: ttsRes.codec })
         playAudio(ttsRes.audio_base64, ttsRes.codec || 'mp3')
       }
